@@ -20,6 +20,8 @@ build-jar-job:
 
 
 docker-build-job:
+  before_script:
+    - source .${CI_COMMIT_REF_NAME}.env
   image: docker:stable
   stage: build and push docker image
   script:
