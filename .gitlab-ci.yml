@@ -1,4 +1,28 @@
-build-job:
-  stage: build
+services:
+  - docker:20.10.3-dind
+
+stages:
+  - compile and test
+  - build jar
+  - build and push docker image
+
+compile-test-job:
+  image: maven:3.6.3-openjdk-15-slim
+  stage: compile and test
   script:
-    - echo "Hello 123, $GITLAB_USER_LOGIN!"
+    - mvn clean test
+
+build-jar-job:
+  image: maven:3.6.3-openjdk-15-slim
+  stage: build jar
+  script:
+    - mvn package
+
+
+docker-build-job:
+  image: docker:stable
+  stage: build and push docker image
+  script:
+    - docker build -t $DOCKER_REPO .
+    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io
+    - docker push $DOCKER_REPO
