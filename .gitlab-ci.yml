@@ -26,7 +26,7 @@ docker-build-job:
   stage: build and push docker image
   script:
     - docker build -t $DOCKER_REPO .
-    - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD docker.io
+    - echo "$DOCKER_PASSWORD" | docker login --username djagielo --password-stdin docker.io
     - docker push $DOCKER_REPO
 
 cache:
