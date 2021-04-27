@@ -7,16 +7,16 @@ stages:
   - build and push docker image
 
 compile-test-job:
-  image: maven:3.6.3-openjdk-15-slim
+  image: gradle:7.0.0-jdk11
   stage: compile and test
   script:
-    - mvn clean test
+    - gradle clean test
 
 build-jar-job:
-  image: maven:3.6.3-openjdk-15-slim
+  image: gradle:7.0.0-jdk11
   stage: build jar
   script:
-    - mvn package
+    - gradle bootJar
 
 
 docker-build-job:
