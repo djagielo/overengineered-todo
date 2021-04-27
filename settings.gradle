@@ -1,0 +1,4 @@
+rootProject.name = 'ambicion-service'
+include 'tasks'
+
+project(":tasks").projectDir = "tasks" as File

@@ -1,0 +1,14 @@
+{
+  "name": "component-tests",
+  "version": "1.0.0",
+  "description": "Component tests - working on Docker image and using REST API as an interface to the app",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "Dariusz Jagielo <dariusz.jagielo@gmail.com> (https://bettercode.dev/)",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^8.3.2"
+  }
+}
