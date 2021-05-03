@@ -11,12 +11,18 @@ compile-test-job:
   stage: compile and test
   script:
     - gradle clean test
+  artifacts:
+    paths:
+      - build
 
 build-jar-job:
   image: gradle:6.8.3-jdk15
   stage: build jar
   script:
     - gradle bootJar
+  artifacts:
+    paths:
+      - build
 
 
 docker-build-job:
