@@ -1,5 +1,6 @@
-package dev.bettercode.tasks
+package dev.bettercode.tasks.infra.adapter.rest
 
+import dev.bettercode.tasks.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -10,7 +11,7 @@ import java.util.*
 class TasksController(val tasksFacade: TasksFacade) {
 
     @GetMapping("/tasks")
-    internal fun getAll(): List<TaskDto> {
+    internal fun getAllTasks(): List<TaskDto> {
         return tasksFacade.getAll()
     }
 
@@ -32,6 +33,26 @@ class TasksController(val tasksFacade: TasksFacade) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     internal fun delete(@PathVariable id: UUID) {
         tasksFacade.delete(TaskId(id))
+    }
+
+
+    @GetMapping("/projects")
+    internal fun getAllProjects(): List<ProjectDto> {
+        return tasksFacade.getProjects()
+    }
+
+    @GetMapping("/projects/{id}")
+    internal fun getProject(id: UUID): ResponseEntity<ProjectDto> {
+        return tasksFacade.getProject(ProjectId(id))?.let {
+            ResponseEntity.ok(it)
+        } ?: ResponseEntity.notFound().build()
+    }
+
+    @GetMapping("/projects/{id}/tasks")
+    internal fun getTasksForProject(id: UUID): ResponseEntity<List<TaskDto>> {
+        return tasksFacade.getProject(ProjectId(id))?.let {
+            ResponseEntity.ok(tasksFacade.getTasksForProject(it.id))
+        } ?: ResponseEntity.notFound().build()
     }
 
     @ExceptionHandler(Exception::class)

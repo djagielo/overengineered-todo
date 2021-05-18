@@ -1,5 +1,6 @@
 package dev.bettercode.tasks
 
+import dev.bettercode.tasks.domain.tasks.Task
 import java.time.Instant
 
 data class TaskDto(

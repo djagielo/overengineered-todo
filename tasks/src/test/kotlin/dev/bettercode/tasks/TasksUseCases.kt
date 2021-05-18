@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 
-internal class TasksFacadeTest {
+internal class TasksUseCases {
 
     private val tasksFacade: TasksFacade = TasksConfiguration.tasksFacade()
 
@@ -65,7 +65,21 @@ internal class TasksFacadeTest {
     }
 
     @Test
-    fun `should be able to undo task completion`() {
+    fun `undo task completion within the same day`() {
+        // given - a saved task
+        val task = TasksFixtures.aNoOfTasks(1).first()
+        addAndComplete(task)
+
+        // when - undoing task completion
+        tasksFacade.uncomplete(task)
+
+        // then - the task should be marked as completed and completion date should be set
+        val result = tasksFacade.get(task.id)
+        assertThat(result?.completionDate).isNull()
+    }
+
+    @Test
+    fun `fail to undo task completion different day`() {
         // given - a saved task
         val task = TasksFixtures.aNoOfTasks(1).first()
         addAndComplete(task)

@@ -1,5 +1,9 @@
-package dev.bettercode.tasks
+package dev.bettercode.tasks.infra.adapter.db
 
+import dev.bettercode.tasks.ProjectId
+import dev.bettercode.tasks.TaskId
+import dev.bettercode.tasks.domain.tasks.TasksRepository
+import dev.bettercode.tasks.domain.tasks.Task
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
@@ -15,6 +19,11 @@ internal class InMemoryTasksRepository: TasksRepository {
         return db[id.uuid]
     }
 
+    override fun save(task: Task): Task {
+        db[task.id.uuid] = task
+        return task
+    }
+
     override fun getAll(): List<Task> {
         return ArrayList(db.values)
     }
@@ -25,5 +34,9 @@ internal class InMemoryTasksRepository: TasksRepository {
 
     override fun getAllCompleted(): List<Task> {
         return db.values.filter { it.isCompleted() }.toList()
+    }
+
+    override fun findAllForProjectId(projectId: ProjectId): List<Task> {
+        return db.values.filter { it.projectId?.equals(projectId) == true }
     }
 }

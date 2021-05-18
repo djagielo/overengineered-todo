@@ -1,10 +1,12 @@
 package dev.bettercode.tasks
 
+import dev.bettercode.tasks.domain.tasks.Task
+import dev.bettercode.tasks.domain.tasks.TasksRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import java.time.LocalDate
 
-internal class TasksQueryService {
+internal class TasksQueryService(val tasksRepository: TasksRepository) {
     fun findAll(pageRequest: PageRequest): Page<Task> {
         TODO()
     }
@@ -23,5 +25,9 @@ internal class TasksQueryService {
 
     fun findAllForDate(date: LocalDate): Page<Task> {
         TODO()
+    }
+
+    fun findAllForProject(projectId: ProjectId): List<Task> {
+        return this.tasksRepository.findAllForProjectId(projectId)
     }
 }

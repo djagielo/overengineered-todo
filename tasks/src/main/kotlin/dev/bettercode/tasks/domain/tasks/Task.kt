@@ -1,8 +1,10 @@
-package dev.bettercode.tasks
+package dev.bettercode.tasks.domain.tasks
 
+import dev.bettercode.tasks.ProjectId
+import dev.bettercode.tasks.TaskId
 import java.time.ZonedDateTime
 
-internal class Task(val name: String, val id: TaskId = TaskId()) {
+internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: ProjectId? = null) {
     internal var completionDate: ZonedDateTime? = null
     private var status = TaskStatus.NEW
 
@@ -17,6 +19,10 @@ internal class Task(val name: String, val id: TaskId = TaskId()) {
 
     fun isCompleted(): Boolean {
         return status == TaskStatus.COMPLETED
+    }
+
+    fun assignTo(projectId: ProjectId) {
+        this.projectId = projectId
     }
 
     fun uncomplete() {

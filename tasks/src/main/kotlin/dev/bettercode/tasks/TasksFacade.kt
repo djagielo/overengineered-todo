@@ -1,11 +1,21 @@
 package dev.bettercode.tasks
 
+import dev.bettercode.tasks.application.projects.ProjectAssignmentService
+import dev.bettercode.tasks.application.projects.ProjectCrudService
+import dev.bettercode.tasks.application.tasks.TaskCompletionService
+import dev.bettercode.tasks.application.tasks.TaskCrudService
+import dev.bettercode.tasks.domain.projects.Project
+import dev.bettercode.tasks.domain.tasks.Task
+
 class TasksFacade internal constructor(
     private val taskCrudService: TaskCrudService,
-    private val taskCompletionService: TaskCompletionService
+    private val taskCompletionService: TaskCompletionService,
+    private val projectCrudService: ProjectCrudService,
+    private val projectAssignmentService: ProjectAssignmentService,
+    private val tasksQueryService: TasksQueryService
 ) {
     fun add(task: TaskDto): TaskDto {
-        return TaskDto.from(taskCrudService.add(Task(name = task.name, id = task.id)))!!
+        return TaskDto.from(taskCrudService.add(Task(id = task.id, name = task.name)))!!
     }
 
     fun delete(id: TaskId) {
@@ -37,6 +47,56 @@ class TasksFacade internal constructor(
     }
 
     fun uncomplete(id: TaskId) {
-        this.taskCompletionService.uncomplete(id)
+        taskCompletionService.uncomplete(id)
+    }
+
+    fun getProject(projectId: ProjectId): ProjectDto? {
+        return projectCrudService.get(projectId)?.let {
+            ProjectDto.from(it)
+        }
+    }
+
+    fun getProjects(): List<ProjectDto> {
+        return projectCrudService.getAll().map { ProjectDto.from(it)!! }
+    }
+
+    fun addProject(project: ProjectDto): ProjectDto {
+        return ProjectDto.from(projectCrudService.add(Project(name = project.name)))!!
+    }
+
+    fun deleteProject(project: ProjectDto) {
+        deleteProject(project.id)
+    }
+
+    fun deleteProject(projectId: ProjectId) {
+        projectCrudService.delete(projectId)
+    }
+
+    fun assignToProject(task: TaskDto, project: ProjectDto) {
+        projectAssignmentService.assign(task.id, project.id)
+    }
+
+    fun getTasksForProject(project: ProjectDto): List<TaskDto> {
+        return getTasksForProject(project.id)
+    }
+
+    fun getTasksForProject(projectId: ProjectId): List<TaskDto> {
+        return projectCrudService.get(projectId)?.let {
+            return tasksQueryService.findAllForProject(projectId).map {
+                TaskDto.from(it)!!
+            }
+        } ?: listOf()
+    }
+
+    fun addToProject(task: TaskDto, project: ProjectDto): TaskDto {
+        return TaskDto.from(
+            taskCrudService.addTaskForAProject(
+                Task(name = task.name, id = task.id), project.id
+            )
+        )!!
+    }
+
+    fun getInbox(): ProjectDto? {
+        return ProjectDto.from(projectCrudService.getInboxProject())
     }
 }
