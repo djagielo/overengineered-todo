@@ -6,7 +6,6 @@ import dev.bettercode.tasks.domain.projects.ProjectRepository
 import dev.bettercode.tasks.domain.tasks.TasksRepository
 import dev.bettercode.tasks.shared.DomainEventPublisher
 import dev.bettercode.tasks.shared.DomainResult
-import io.vavr.control.Try
 
 
 internal class ProjectAssignmentService(
