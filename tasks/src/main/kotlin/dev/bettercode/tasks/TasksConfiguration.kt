@@ -93,4 +93,9 @@ class TasksConfiguration {
     internal fun tasksQueryService(tasksRepository: TasksRepository): TasksQueryService {
         return TasksQueryService(tasksRepository)
     }
+
+    @Bean
+    internal fun projectCompletionService(projectRepository: ProjectRepository): ProjectCompletionService {
+        return ProjectCompletionService(projectRepository)
+    }
 }
