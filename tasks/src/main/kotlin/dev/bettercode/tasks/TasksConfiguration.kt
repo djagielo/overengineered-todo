@@ -1,21 +1,22 @@
 package dev.bettercode.tasks
 
 import dev.bettercode.tasks.application.projects.ProjectAssignmentService
+import dev.bettercode.tasks.application.projects.ProjectCompletionService
 import dev.bettercode.tasks.application.projects.ProjectCrudService
 import dev.bettercode.tasks.application.tasks.TaskCompletionService
 import dev.bettercode.tasks.application.tasks.TaskCrudService
 import dev.bettercode.tasks.domain.projects.ProjectRepository
-import dev.bettercode.tasks.infra.adapter.db.InMemoryProjectRepository
-import dev.bettercode.tasks.domain.tasks.Task
+import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectRepository
 import dev.bettercode.tasks.domain.tasks.TasksRepository
-import dev.bettercode.tasks.infra.adapter.db.InMemoryTasksRepository
+import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryTasksRepository
+import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 
 @Configuration
 class TasksConfiguration {
     companion object {
-        fun tasksFacade(): TasksFacade {
+        fun tasksFacade(inMemoryEventPublisher: InMemoryEventPublisher = InMemoryEventPublisher()): TasksFacade {
             val taskRepo = InMemoryTasksRepository()
             val projectRepo = InMemoryProjectRepository()
             val projectCrudService = ProjectCrudService(projectRepo)
@@ -23,7 +24,8 @@ class TasksConfiguration {
                 TaskCrudService(taskRepo, projectCrudService),
                 TaskCompletionService(taskRepo),
                 projectCrudService,
-                ProjectAssignmentService(projectRepo, taskRepo),
+                ProjectAssignmentService(projectRepo, taskRepo, inMemoryEventPublisher),
+                ProjectCompletionService(projectRepo),
                 TasksQueryService(taskRepo)
             )
         }
@@ -45,6 +47,7 @@ class TasksConfiguration {
         tasksCompletionService: TaskCompletionService,
         projectCrudService: ProjectCrudService,
         projectAssignmentService: ProjectAssignmentService,
+        projectCompletionService: ProjectCompletionService,
         tasksQueryService: TasksQueryService
     ): TasksFacade {
         return TasksFacade(
@@ -52,6 +55,7 @@ class TasksConfiguration {
             tasksCompletionService,
             projectCrudService,
             projectAssignmentService,
+            projectCompletionService,
             tasksQueryService
         )
     }
@@ -77,7 +81,7 @@ class TasksConfiguration {
         projectRepository: ProjectRepository,
         tasksRepository: TasksRepository
     ): ProjectAssignmentService {
-        return ProjectAssignmentService(projectRepository, tasksRepository)
+        return ProjectAssignmentService(projectRepository, tasksRepository, InMemoryEventPublisher())
     }
 
     @Bean

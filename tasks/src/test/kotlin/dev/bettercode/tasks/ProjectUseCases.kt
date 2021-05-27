@@ -1,13 +1,17 @@
 package dev.bettercode.tasks;
 
 import dev.bettercode.bettercode.tasks.TasksFixtures
+import dev.bettercode.tasks.application.projects.TaskAssignedToProject
+import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test;
 
 internal class ProjectUseCases {
 
-    private val tasksFacade: TasksFacade = TasksConfiguration.tasksFacade()
+    private val inMemoryEventPublisher = InMemoryEventPublisher()
+    private val tasksFacade: TasksFacade =
+        TasksConfiguration.tasksFacade(inMemoryEventPublisher = inMemoryEventPublisher)
 
     @Test
     fun `create project`() {
@@ -48,7 +52,7 @@ internal class ProjectUseCases {
         // when
         tasks.take(3)
             .forEach {
-                tasksFacade.assignToProject(it, blogProject)
+                assertThat(tasksFacade.assignToProject(it, blogProject).successful).isTrue()
             }
 
         // then
@@ -68,7 +72,7 @@ internal class ProjectUseCases {
         // when
         tasks.take(3)
             .forEach {
-                tasksFacade.assignToProject(it, tasksFacade.getInbox()!!)
+                assertThat(tasksFacade.assignToProject(it, tasksFacade.getInbox()!!).successful).isTrue()
             }
 
         // then
@@ -97,7 +101,8 @@ internal class ProjectUseCases {
     @Test
     fun `should switch task assignment from INBOX to new project`() {
         // given - a task in Inbox project
-        tasksFacade.add(TasksFixtures.aNoOfTasks(1).first())
+        val task = TasksFixtures.aNoOfTasks(1).first()
+        tasksFacade.add(task)
         // and - new project
         val privProject = tasksFacade.addProject(ProjectDto(name = "PRIV"))
 
@@ -113,5 +118,55 @@ internal class ProjectUseCases {
         assertThat(tasksFacade.getTasksForProject(tasksFacade.getInbox()!!.id)).isEmpty()
         // and - PRIV project has 1 task
         assertThat(tasksFacade.getTasksForProject(privProject)).hasSize(1)
+        // and - assign event gets published
+        assertThat(inMemoryEventPublisher.events).hasSize(1)
+        assertThat(inMemoryEventPublisher.events).isEqualTo(
+            listOf(
+                TaskAssignedToProject(task.id, privProject.id)
+            )
+        )
     }
+
+    @Test
+    fun `task assignment to non-existing project fails`() {
+        // given - a task in Inbox project
+        val task = TasksFixtures.aNoOfTasks(1).first()
+        tasksFacade.add(task)
+
+        // when - trying to assign task to non-existing project
+        val result = tasksFacade.assignToProject(tasksFacade.getAll().first(), ProjectId())
+
+        // then - failure with proper reason should be returned
+        assertThat(result.failure).isTrue
+        assertThat(result.reason).isEqualTo("No project with given id")
+    }
+
+    @Test
+    fun `task cannot be assigned to completed project`() {
+        // given - a task in Inbox project
+        val task = TasksFixtures.aNoOfTasks(1).first()
+        tasksFacade.add(task)
+        // and a project that is completed
+        val project = tasksFacade.addProject(ProjectDto(name = "COMPLETED"))
+        tasksFacade.completeProject(project)
+
+        // when - trying to assign task to non-existing project
+        val result = tasksFacade.assignToProject(tasksFacade.getAll().first(), project)
+
+        // then - failure with proper reason should be returned
+        assertThat(result.failure).isTrue
+        assertThat(result.reason).isEqualTo("Cannot assign to completed project")
+    }
+
+    // completed task cannot be reassigned
+
+    // completed task needs to be reopened before reassignment
+
+    // project deletion with forced flag deletes its tasks also
+
+    // project deletion without forced flag moves open tasks to INBOX
+
+    // project completion with special flag completes its tasks
+
+    // projection completion without flag moves open tasks to INBOX
 }

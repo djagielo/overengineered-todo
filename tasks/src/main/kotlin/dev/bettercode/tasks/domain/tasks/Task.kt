@@ -2,6 +2,8 @@ package dev.bettercode.tasks.domain.tasks
 
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
+import dev.bettercode.tasks.domain.projects.Project
+import dev.bettercode.tasks.shared.DomainResult
 import java.time.ZonedDateTime
 
 internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: ProjectId? = null) {
@@ -21,8 +23,13 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
         return status == TaskStatus.COMPLETED
     }
 
-    fun assignTo(projectId: ProjectId) {
-        this.projectId = projectId
+    fun assignTo(project: Project): DomainResult {
+        return if (project.completed) {
+            DomainResult.failure("Cannot assign to completed project")
+        } else {
+            this.projectId = project.id
+            DomainResult.success()
+        }
     }
 
     fun uncomplete() {

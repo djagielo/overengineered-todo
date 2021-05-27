@@ -1,17 +1,20 @@
 package dev.bettercode.tasks
 
 import dev.bettercode.tasks.application.projects.ProjectAssignmentService
+import dev.bettercode.tasks.application.projects.ProjectCompletionService
 import dev.bettercode.tasks.application.projects.ProjectCrudService
 import dev.bettercode.tasks.application.tasks.TaskCompletionService
 import dev.bettercode.tasks.application.tasks.TaskCrudService
 import dev.bettercode.tasks.domain.projects.Project
 import dev.bettercode.tasks.domain.tasks.Task
+import dev.bettercode.tasks.shared.DomainResult
 
 class TasksFacade internal constructor(
     private val taskCrudService: TaskCrudService,
     private val taskCompletionService: TaskCompletionService,
     private val projectCrudService: ProjectCrudService,
     private val projectAssignmentService: ProjectAssignmentService,
+    private val projectCompletionService: ProjectCompletionService,
     private val tasksQueryService: TasksQueryService
 ) {
     fun add(task: TaskDto): TaskDto {
@@ -72,8 +75,12 @@ class TasksFacade internal constructor(
         projectCrudService.delete(projectId)
     }
 
-    fun assignToProject(task: TaskDto, project: ProjectDto) {
-        projectAssignmentService.assign(task.id, project.id)
+    fun assignToProject(task: TaskDto, project: ProjectDto): DomainResult {
+        return projectAssignmentService.assign(task.id, project.id)
+    }
+
+    fun assignToProject(task: TaskDto, projectId: ProjectId): DomainResult {
+        return projectAssignmentService.assign(task.id, projectId)
     }
 
     fun getTasksForProject(project: ProjectDto): List<TaskDto> {
@@ -98,5 +105,9 @@ class TasksFacade internal constructor(
 
     fun getInbox(): ProjectDto? {
         return ProjectDto.from(projectCrudService.getInboxProject())
+    }
+
+    fun completeProject(project: ProjectDto): DomainResult {
+        return projectCompletionService.complete(project.id)
     }
 }

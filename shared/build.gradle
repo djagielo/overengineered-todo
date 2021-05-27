@@ -1,0 +1,14 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+}
+
+jar {
+    enabled = true
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+}

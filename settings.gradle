@@ -1,4 +1,6 @@
 rootProject.name = 'ambicion-service'
+include 'shared'
 include 'tasks'
 
+project(":shared").projectDir = "shared" as File
 project(":tasks").projectDir = "tasks" as File

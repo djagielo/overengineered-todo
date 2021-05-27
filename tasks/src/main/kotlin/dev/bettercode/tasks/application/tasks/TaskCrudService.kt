@@ -11,13 +11,13 @@ internal class TaskCrudService(
     private val projectCrudService: ProjectCrudService
 ) {
     fun add(task: Task): Task {
-        task.assignTo(projectCrudService.getInboxProject().id)
+        task.assignTo(projectCrudService.getInboxProject())
         return tasksRepository.add(task)
     }
 
     fun addTaskForAProject(task: Task, projectId: ProjectId): Task? {
         return projectCrudService.get(projectId)?.let {
-            task.assignTo(it.id)
+            task.assignTo(it)
             return tasksRepository.save(task)
         }
     }

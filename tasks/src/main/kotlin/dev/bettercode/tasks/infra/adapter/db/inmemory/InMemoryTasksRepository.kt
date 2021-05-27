@@ -1,4 +1,4 @@
-package dev.bettercode.tasks.infra.adapter.db
+package dev.bettercode.tasks.infra.adapter.db.inmemory
 
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId

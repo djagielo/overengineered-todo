@@ -42,14 +42,14 @@ class TasksController(val tasksFacade: TasksFacade) {
     }
 
     @GetMapping("/projects/{id}")
-    internal fun getProject(id: UUID): ResponseEntity<ProjectDto> {
+    internal fun getProject(@PathVariable id: UUID): ResponseEntity<ProjectDto> {
         return tasksFacade.getProject(ProjectId(id))?.let {
             ResponseEntity.ok(it)
         } ?: ResponseEntity.notFound().build()
     }
 
     @GetMapping("/projects/{id}/tasks")
-    internal fun getTasksForProject(id: UUID): ResponseEntity<List<TaskDto>> {
+    internal fun getTasksForProject(@PathVariable id: UUID): ResponseEntity<List<TaskDto>> {
         return tasksFacade.getProject(ProjectId(id))?.let {
             ResponseEntity.ok(tasksFacade.getTasksForProject(it.id))
         } ?: ResponseEntity.notFound().build()
