@@ -4,8 +4,8 @@ import dev.bettercode.bettercode.tasks.TasksFixtures
 import dev.bettercode.tasks.application.projects.TaskAssignedToProject
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Disabled
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Test
+import org.springframework.data.domain.PageRequest
 
 internal class ProjectUseCases {
 
@@ -44,7 +44,7 @@ internal class ProjectUseCases {
         // given - a project of name BLOG
         val blogProject = tasksFacade.addProject(ProjectDto("BLOG"))
         // and - it has no tasks
-        assertThat(tasksFacade.getTasksForProject(blogProject)).hasSize(0)
+        assertThat(tasksFacade.getTasksForProject(PageRequest.of(0, 100), blogProject)).hasSize(0)
         // and - 5 tasks are created
         val tasks = TasksFixtures.aNoOfTasks(5)
         tasks.forEach { tasksFacade.add(it) }
@@ -56,7 +56,7 @@ internal class ProjectUseCases {
             }
 
         // then
-        val blogTasks = tasksFacade.getTasksForProject(blogProject)
+        val blogTasks = tasksFacade.getTasksForProject(PageRequest.of(0, 100), blogProject)
         assertThat(blogTasks).hasSize(3)
         assertThat(blogTasks.map { it.name }).hasSameElementsAs(tasks.take(3).map { it.name })
     }
@@ -76,7 +76,7 @@ internal class ProjectUseCases {
             }
 
         // then
-        val blogTasks = tasksFacade.getTasksForProject(blogProject)
+        val blogTasks = tasksFacade.getTasksForProject(PageRequest.of(0, 100), blogProject)
         assertThat(blogTasks).hasSize(2)
         assertThat(blogTasks.map { it.name }).hasSameElementsAs(tasks.drop(3).map { it.name })
     }
@@ -95,7 +95,12 @@ internal class ProjectUseCases {
         // then - it should have INBOX projects created
         assertThat(projects).hasSize(1)
         assertThat(projects.map { it.name }).containsExactly("INBOX")
-        assertThat(tasksFacade.getTasksForProject(projects.first())).containsExactlyInAnyOrder(*tasks.toTypedArray())
+        assertThat(
+            tasksFacade.getTasksForProject(
+                PageRequest.of(0, 100),
+                projects.first()
+            )
+        ).containsExactlyInAnyOrder(*tasks.toTypedArray())
     }
 
     @Test
@@ -115,9 +120,9 @@ internal class ProjectUseCases {
         assertThat(projects.map { it.name }).containsExactlyInAnyOrder("INBOX", "PRIV")
 
         // and - INBOX project should have 0 tasks
-        assertThat(tasksFacade.getTasksForProject(tasksFacade.getInbox()!!.id)).isEmpty()
+        assertThat(tasksFacade.getTasksForProject(PageRequest.of(0, 100), tasksFacade.getInbox()!!.id)).isEmpty()
         // and - PRIV project has 1 task
-        assertThat(tasksFacade.getTasksForProject(privProject)).hasSize(1)
+        assertThat(tasksFacade.getTasksForProject(PageRequest.of(0, 100), privProject)).hasSize(1)
         // and - assign event gets published
         assertThat(inMemoryEventPublisher.events).hasSize(1)
         assertThat(inMemoryEventPublisher.events).isEqualTo(
@@ -158,15 +163,49 @@ internal class ProjectUseCases {
         assertThat(result.reason).isEqualTo("Cannot assign to completed project")
     }
 
-    // completed task cannot be reassigned
+    @Test
+    fun `completed task cannot be reassigned`() {
+        // given - a task that's completed
+        val task = TasksFixtures.aNoOfTasks(1).first()
+        tasksFacade.add(task)
+        tasksFacade.complete(task)
 
-    // completed task needs to be reopened before reassignment
+        // and a project
+        val project = tasksFacade.addProject(ProjectDto("BLOG"))
+
+        // when - trying to assign completed task to different project
+        val result = tasksFacade.assignToProject(task, project)
+
+        // then - failure with proper reason should be returned
+        assertThat(result.failure).isTrue
+        assertThat(result.reason).isEqualTo("Cannot assign completed task")
+    }
+
+    @Test
+    fun `completed task needs to be reopened before reassignment`() {
+        // given - a task that's completed
+        val task = TasksFixtures.aNoOfTasks(1).first()
+        tasksFacade.add(task)
+        tasksFacade.complete(task)
+
+        // and a project
+        val project = tasksFacade.addProject(ProjectDto("BLOG"))
+
+        // and a task gets reopened
+        tasksFacade.uncomplete(task)
+
+        // when - trying to assign reopened task to project
+        val result = tasksFacade.assignToProject(task, project)
+
+        // then - failure with proper reason should be returned
+        assertThat(result.successful).isTrue
+    }
 
     // project deletion with forced flag deletes its tasks also
 
     // project deletion without forced flag moves open tasks to INBOX
 
-    // project completion with special flag completes its tasks
+    // project completion with special flag completes its tasks also
 
-    // projection completion without flag moves open tasks to INBOX
+    // project completion without flag moves open tasks to INBOX
 }

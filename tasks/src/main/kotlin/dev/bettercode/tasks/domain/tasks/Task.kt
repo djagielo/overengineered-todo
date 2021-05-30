@@ -26,6 +26,8 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
     fun assignTo(project: Project): DomainResult {
         return if (project.completed) {
             DomainResult.failure("Cannot assign to completed project")
+        } else if (this.isCompleted()) {
+            DomainResult.failure("Cannot assign completed task")
         } else {
             this.projectId = project.id
             DomainResult.success()

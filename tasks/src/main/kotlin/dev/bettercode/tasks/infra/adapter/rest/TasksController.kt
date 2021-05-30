@@ -1,6 +1,8 @@
 package dev.bettercode.tasks.infra.adapter.rest
 
 import dev.bettercode.tasks.*
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -49,9 +51,9 @@ class TasksController(val tasksFacade: TasksFacade) {
     }
 
     @GetMapping("/projects/{id}/tasks")
-    internal fun getTasksForProject(@PathVariable id: UUID): ResponseEntity<List<TaskDto>> {
+    internal fun getTasksForProject(@PathVariable id: UUID): ResponseEntity<Page<TaskDto>> {
         return tasksFacade.getProject(ProjectId(id))?.let {
-            ResponseEntity.ok(tasksFacade.getTasksForProject(it.id))
+            ResponseEntity.ok(tasksFacade.getTasksForProject(PageRequest.of(0, 100), it.id))
         } ?: ResponseEntity.notFound().build()
     }
 

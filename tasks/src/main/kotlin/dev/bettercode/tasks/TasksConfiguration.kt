@@ -8,7 +8,10 @@ import dev.bettercode.tasks.application.tasks.TaskCrudService
 import dev.bettercode.tasks.domain.projects.ProjectRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectRepository
 import dev.bettercode.tasks.domain.tasks.TasksRepository
+import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryQueryRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryTasksRepository
+import dev.bettercode.tasks.query.TasksQueryRepository
+import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -19,6 +22,7 @@ class TasksConfiguration {
         fun tasksFacade(inMemoryEventPublisher: InMemoryEventPublisher = InMemoryEventPublisher()): TasksFacade {
             val taskRepo = InMemoryTasksRepository()
             val projectRepo = InMemoryProjectRepository()
+            val tasksQueryRepository = InMemoryQueryRepository(taskRepo)
             val projectCrudService = ProjectCrudService(projectRepo)
             return TasksFacade(
                 TaskCrudService(taskRepo, projectCrudService),
@@ -26,7 +30,7 @@ class TasksConfiguration {
                 projectCrudService,
                 ProjectAssignmentService(projectRepo, taskRepo, inMemoryEventPublisher),
                 ProjectCompletionService(projectRepo),
-                TasksQueryService(taskRepo)
+                TasksQueryService(tasksQueryRepository)
             )
         }
     }
@@ -39,6 +43,11 @@ class TasksConfiguration {
     @Bean
     internal fun projectsRepository(): InMemoryProjectRepository {
         return InMemoryProjectRepository()
+    }
+
+    @Bean
+    internal fun tasksQueryRepository(inMemoryTasksRepository: InMemoryTasksRepository): InMemoryQueryRepository {
+        return InMemoryQueryRepository(inMemoryTasksRepository)
     }
 
     @Bean
@@ -90,8 +99,8 @@ class TasksConfiguration {
     }
 
     @Bean
-    internal fun tasksQueryService(tasksRepository: TasksRepository): TasksQueryService {
-        return TasksQueryService(tasksRepository)
+    internal fun tasksQueryService(tasksQueryRepository: TasksQueryRepository): TasksQueryService {
+        return TasksQueryService(tasksQueryRepository)
     }
 
     @Bean

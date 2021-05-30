@@ -7,7 +7,10 @@ import dev.bettercode.tasks.application.tasks.TaskCompletionService
 import dev.bettercode.tasks.application.tasks.TaskCrudService
 import dev.bettercode.tasks.domain.projects.Project
 import dev.bettercode.tasks.domain.tasks.Task
+import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.DomainResult
+import org.springframework.data.domain.Page
+import org.springframework.data.domain.PageRequest
 
 class TasksFacade internal constructor(
     private val taskCrudService: TaskCrudService,
@@ -83,16 +86,14 @@ class TasksFacade internal constructor(
         return projectAssignmentService.assign(task.id, projectId)
     }
 
-    fun getTasksForProject(project: ProjectDto): List<TaskDto> {
-        return getTasksForProject(project.id)
+    fun getTasksForProject(pageRequest: PageRequest, project: ProjectDto): Page<TaskDto> {
+        return getTasksForProject(pageRequest, project.id)
     }
 
-    fun getTasksForProject(projectId: ProjectId): List<TaskDto> {
+    fun getTasksForProject(pageRequest: PageRequest, projectId: ProjectId): Page<TaskDto> {
         return projectCrudService.get(projectId)?.let {
-            return tasksQueryService.findAllForProject(projectId).map {
-                TaskDto.from(it)!!
-            }
-        } ?: listOf()
+            return tasksQueryService.findAllForProject(pageRequest, projectId)
+        } ?: Page.empty()
     }
 
     fun addToProject(task: TaskDto, project: ProjectDto): TaskDto {
