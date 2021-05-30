@@ -169,7 +169,6 @@ internal class ProjectUseCases {
         val task = TasksFixtures.aNoOfTasks(1).first()
         tasksFacade.add(task)
         tasksFacade.complete(task)
-
         // and a project
         val project = tasksFacade.addProject(ProjectDto("BLOG"))
 
@@ -187,12 +186,10 @@ internal class ProjectUseCases {
         val task = TasksFixtures.aNoOfTasks(1).first()
         tasksFacade.add(task)
         tasksFacade.complete(task)
-
         // and a project
         val project = tasksFacade.addProject(ProjectDto("BLOG"))
-
         // and a task gets reopened
-        tasksFacade.uncomplete(task)
+        tasksFacade.reopenTask(task)
 
         // when - trying to assign reopened task to project
         val result = tasksFacade.assignToProject(task, project)

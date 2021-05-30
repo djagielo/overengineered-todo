@@ -24,24 +24,31 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
     }
 
     fun assignTo(project: Project): DomainResult {
-        return if (project.completed) {
-            DomainResult.failure("Cannot assign to completed project")
-        } else if (this.isCompleted()) {
-            DomainResult.failure("Cannot assign completed task")
-        } else {
-            this.projectId = project.id
-            DomainResult.success()
+        return when {
+            project.completed -> {
+                DomainResult.failure("Cannot assign to completed project")
+            }
+            this.isCompleted() -> {
+                DomainResult.failure("Cannot assign completed task")
+            }
+            else -> {
+                this.projectId = project.id
+                DomainResult.success()
+            }
         }
     }
 
-    fun uncomplete() {
+    fun reopen(): DomainResult {
         if (status == TaskStatus.COMPLETED) {
             if (completionDate?.toLocalDate()?.equals(ZonedDateTime.now().toLocalDate()) == false) {
-                // not the same day, cannot be uncompleted
+                return DomainResult.failure("Task can be reopened within the same day as completed")
             }
 
             status = TaskStatus.NEW
             completionDate = null
+            return DomainResult.success()
         }
+
+        return DomainResult.success()
     }
 }

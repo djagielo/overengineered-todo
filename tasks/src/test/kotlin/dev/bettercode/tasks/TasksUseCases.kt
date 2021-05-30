@@ -71,7 +71,7 @@ internal class TasksUseCases {
         addAndComplete(task)
 
         // when - undoing task completion
-        tasksFacade.uncomplete(task)
+        tasksFacade.reopenTask(task)
 
         // then - the task should be marked as completed and completion date should be set
         val result = tasksFacade.get(task.id)
@@ -85,7 +85,7 @@ internal class TasksUseCases {
         addAndComplete(task)
 
         // when - undoing task completion
-        tasksFacade.uncomplete(task)
+        tasksFacade.reopenTask(task)
 
         // then - the task should be marked as completed and completion date should be set
         val result = tasksFacade.get(task.id)

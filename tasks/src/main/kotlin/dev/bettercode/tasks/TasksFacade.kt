@@ -48,12 +48,12 @@ class TasksFacade internal constructor(
         return taskCrudService.getAllCompleted().map { TaskDto.from(it)!! }
     }
 
-    fun uncomplete(task: TaskDto) {
-        this.uncomplete(task.id)
+    fun reopenTask(task: TaskDto) {
+        this.reopenTask(task.id)
     }
 
-    fun uncomplete(id: TaskId) {
-        taskCompletionService.uncomplete(id)
+    fun reopenTask(id: TaskId) {
+        taskCompletionService.reopen(id)
     }
 
     fun getProject(projectId: ProjectId): ProjectDto? {

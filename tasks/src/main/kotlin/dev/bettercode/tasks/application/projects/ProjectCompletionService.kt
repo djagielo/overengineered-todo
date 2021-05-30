@@ -13,4 +13,11 @@ internal class ProjectCompletionService(private val projectRepository: ProjectRe
         } ?: DomainResult.failure("No project with given id")
     }
 
+    fun reopen(projectId: ProjectId): DomainResult {
+        return projectRepository.get(projectId)?.let {
+            it.reopen()
+            projectRepository.save(it)
+            DomainResult.success()
+        } ?: DomainResult.failure("No project with given id")
+    }
 }

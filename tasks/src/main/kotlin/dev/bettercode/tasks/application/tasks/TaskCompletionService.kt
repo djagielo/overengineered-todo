@@ -16,11 +16,11 @@ internal class TaskCompletionService(private val tasksRepository: TasksRepositor
         return task
     }
 
-    fun uncomplete(id: TaskId): Task? {
+    fun reopen(id: TaskId): Task? {
         val task = tasksRepository.get(id)
 
         task?.let {
-            it.uncomplete()
+            it.reopen()
             tasksRepository.save(it)
         }
 
