@@ -4,10 +4,12 @@ import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
 import dev.bettercode.tasks.domain.projects.Project
 import dev.bettercode.tasks.shared.DomainResult
-import java.time.ZonedDateTime
+import java.time.Instant
+import java.time.LocalDate
+import java.time.ZoneId
 
 internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: ProjectId? = null) {
-    internal var completionDate: ZonedDateTime? = null
+    internal var completionDate: Instant? = null
     private var status = TaskStatus.NEW
 
     override fun toString(): String {
@@ -15,8 +17,12 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
     }
 
     fun complete() {
+        complete(Instant.now())
+    }
+
+    fun complete(instant: Instant) {
         status = TaskStatus.COMPLETED
-        completionDate = ZonedDateTime.now()
+        completionDate = instant
     }
 
     fun isCompleted(): Boolean {
@@ -39,8 +45,14 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
     }
 
     fun reopen(): DomainResult {
+        return reopen(Instant.now())
+    }
+
+    fun reopen(instant: Instant): DomainResult {
         if (status == TaskStatus.COMPLETED) {
-            if (completionDate?.toLocalDate()?.equals(ZonedDateTime.now().toLocalDate()) == false) {
+            if (!LocalDate.ofInstant(completionDate, ZoneId.of("UTC"))
+                    .equals(LocalDate.ofInstant(instant, ZoneId.of("UTC")))
+            ) {
                 return DomainResult.failure("Task can be reopened within the same day as completed")
             }
 

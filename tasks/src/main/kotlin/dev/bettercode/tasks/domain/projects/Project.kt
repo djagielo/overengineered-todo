@@ -5,13 +5,12 @@ import dev.bettercode.tasks.shared.DomainResult
 import java.time.Instant
 import java.time.LocalDate
 import java.time.ZoneId
-import java.time.ZonedDateTime
 
 internal open class Project(
     val name: String,
     val id: ProjectId = ProjectId(),
     private var status: ProjectStatus = ProjectStatus.NEW,
-    private var completionDate: ZonedDateTime? = null
+    private var completionDate: Instant? = null
 ) {
 
     val completed get() = this.status == ProjectStatus.COMPLETED
@@ -22,7 +21,7 @@ internal open class Project(
 
     internal fun complete(instant: Instant): DomainResult {
         status = ProjectStatus.COMPLETED
-        completionDate = instant.atZone(ZoneId.systemDefault())
+        completionDate = instant;
         return DomainResult.success()
     }
 
@@ -32,7 +31,9 @@ internal open class Project(
 
     fun reopen(instant: Instant): DomainResult {
         if (status == ProjectStatus.COMPLETED) {
-            if (completionDate?.toLocalDate()?.equals(LocalDate.ofInstant(instant, ZoneId.systemDefault())) == false) {
+            if (!LocalDate.ofInstant(completionDate, ZoneId.of("UTC"))
+                    .equals(LocalDate.ofInstant(instant, ZoneId.of("UTC")))
+            ) {
                 return DomainResult.failure("Project can be reopened within the same day as completed")
             }
         }

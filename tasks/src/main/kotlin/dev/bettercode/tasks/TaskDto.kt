@@ -13,7 +13,7 @@ data class TaskDto(
 
     companion object {
         internal fun from(task: Task?): TaskDto? {
-            return task?.let { t -> TaskDto(t.id, t.name, t.completionDate?.toInstant()) }
+            return task?.let { t -> TaskDto(t.id, t.name, t.completionDate) }
         }
     }
 }

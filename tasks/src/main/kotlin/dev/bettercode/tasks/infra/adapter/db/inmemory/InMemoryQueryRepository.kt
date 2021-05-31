@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
 import java.time.LocalDate
+import java.time.ZoneId
 import kotlin.math.min
 
 
@@ -47,7 +48,7 @@ internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTask
     override fun findAllCompletedForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto> {
         return listToPage(
             inMemoryTasksDb.getAll().filter {
-                it.completionDate?.toLocalDate()?.equals(date) == true
+                LocalDate.ofInstant(it.completionDate, ZoneId.of("UTC")).equals(date)
             }.map { TaskDto.from(it)!! },
             pageRequest
         )
@@ -56,7 +57,7 @@ internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTask
     override fun findAllOpenForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto> {
         return listToPage(
             inMemoryTasksDb.getAll().filter {
-                it.completionDate?.toLocalDate()?.equals(date) == true
+                LocalDate.ofInstant(it.completionDate, ZoneId.of("UTC")).equals(date)
             }.filter {
                 !it.isCompleted()
             }.map { TaskDto.from(it)!! },
@@ -67,7 +68,7 @@ internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTask
     override fun findAllForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto> {
         return listToPage(
             inMemoryTasksDb.getAll().filter {
-                it.completionDate?.toLocalDate()?.equals(date) == true
+                LocalDate.ofInstant(it.completionDate, ZoneId.of("UTC")).equals(date)
             }.filter {
                 !it.isCompleted()
             }.map { TaskDto.from(it)!! },

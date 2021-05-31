@@ -16,12 +16,12 @@ internal class ProjectTest {
         private fun reopenSource(): Stream<Arguments> {
             return Stream.of(
                 Arguments.of(
-                    LocalDateTime.of(2021, 5, 30, 12, 22).atZone(ZoneId.of("Europe/Warsaw")).toInstant(),
-                    LocalDateTime.of(2021, 5, 30, 22, 13).atZone(ZoneId.of("Europe/Warsaw")).toInstant(),
+                    LocalDateTime.of(2021, 5, 30, 12, 22).atZone(ZoneId.of("UTC")).toInstant(),
+                    LocalDateTime.of(2021, 5, 30, 22, 13).atZone(ZoneId.of("UTC")).toInstant(),
                 ),
                 Arguments.of(
-                    LocalDateTime.of(2021, 5, 30, 0, 0, 0, 123_000_000).atZone(ZoneId.of("Europe/Warsaw")).toInstant(),
-                    LocalDateTime.of(2021, 5, 30, 23, 59, 59, 999_000_000).atZone(ZoneId.of("Europe/Warsaw"))
+                    LocalDateTime.of(2021, 5, 30, 0, 0, 0, 123_000_000).atZone(ZoneId.of("UTC")).toInstant(),
+                    LocalDateTime.of(2021, 5, 30, 23, 59, 59, 999_000_000).atZone(ZoneId.of("UTC"))
                         .toInstant()
                 )
             )
@@ -31,12 +31,12 @@ internal class ProjectTest {
         private fun reopenSourceFailure(): Stream<Arguments> {
             return Stream.of(
                 Arguments.of(
-                    LocalDateTime.of(2021, 5, 30, 23, 59).atZone(ZoneId.of("Europe/Warsaw")).toInstant(),
-                    LocalDateTime.of(2021, 5, 31, 0, 1).atZone(ZoneId.of("Europe/Warsaw")).toInstant(),
+                    LocalDateTime.of(2021, 5, 30, 23, 59).atZone(ZoneId.of("UTC")).toInstant(),
+                    LocalDateTime.of(2021, 5, 31, 0, 1).atZone(ZoneId.of("UTC")).toInstant(),
                 ),
                 Arguments.of(
-                    LocalDateTime.of(2021, 5, 25, 23, 59).atZone(ZoneId.of("Europe/Warsaw")).toInstant(),
-                    LocalDateTime.of(2021, 5, 31, 0, 1).atZone(ZoneId.of("Europe/Warsaw")).toInstant(),
+                    LocalDateTime.of(2021, 5, 25, 23, 59).atZone(ZoneId.of("UTC")).toInstant(),
+                    LocalDateTime.of(2021, 5, 31, 0, 1).atZone(ZoneId.of("UTC")).toInstant(),
                 )
             )
         }
