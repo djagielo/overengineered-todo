@@ -23,6 +23,8 @@ class DomainResult private constructor(private val result: Either<Failure, Succe
         }
     }
 
+    val events get() = if (this.result.isRight) this.result.get().events else listOf()
+
     val successful get() = this.result.isRight
 
     val failure get() = this.result.isLeft

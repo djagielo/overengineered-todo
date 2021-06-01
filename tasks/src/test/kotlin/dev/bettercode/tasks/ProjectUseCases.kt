@@ -1,11 +1,10 @@
-package dev.bettercode.tasks;
+package dev.bettercode.tasks
 
 import dev.bettercode.bettercode.tasks.TasksFixtures
 import dev.bettercode.tasks.application.projects.TaskAssignedToProject
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
-import org.springframework.data.domain.PageRequest
 
 internal class ProjectUseCases {
 
@@ -44,7 +43,7 @@ internal class ProjectUseCases {
         // given - a project of name BLOG
         val blogProject = tasksFacade.addProject(ProjectDto("BLOG"))
         // and - it has no tasks
-        assertThat(tasksFacade.getTasksForProject(PageRequest.of(0, 100), blogProject)).hasSize(0)
+        assertThat(tasksFacade.getTasksForProject(project = blogProject)).hasSize(0)
         // and - 5 tasks are created
         val tasks = TasksFixtures.aNoOfTasks(5)
         tasks.forEach { tasksFacade.add(it) }
@@ -56,7 +55,7 @@ internal class ProjectUseCases {
             }
 
         // then
-        val blogTasks = tasksFacade.getTasksForProject(PageRequest.of(0, 100), blogProject)
+        val blogTasks = tasksFacade.getTasksForProject(project = blogProject)
         assertThat(blogTasks).hasSize(3)
         assertThat(blogTasks.map { it.name }).hasSameElementsAs(tasks.take(3).map { it.name })
     }
@@ -76,7 +75,7 @@ internal class ProjectUseCases {
             }
 
         // then
-        val blogTasks = tasksFacade.getTasksForProject(PageRequest.of(0, 100), blogProject)
+        val blogTasks = tasksFacade.getTasksForProject(project = blogProject)
         assertThat(blogTasks).hasSize(2)
         assertThat(blogTasks.map { it.name }).hasSameElementsAs(tasks.drop(3).map { it.name })
     }
@@ -97,8 +96,7 @@ internal class ProjectUseCases {
         assertThat(projects.map { it.name }).containsExactly("INBOX")
         assertThat(
             tasksFacade.getTasksForProject(
-                PageRequest.of(0, 100),
-                projects.first()
+                project = projects.first()
             )
         ).containsExactlyInAnyOrder(*tasks.toTypedArray())
     }
@@ -112,7 +110,7 @@ internal class ProjectUseCases {
         val privProject = tasksFacade.addProject(ProjectDto(name = "PRIV"))
 
         // when - asking for projects
-        tasksFacade.assignToProject(tasksFacade.getAll().first(), privProject)
+        tasksFacade.assignToProject(tasksFacade.getOpenInboxTasks().first(), privProject)
 
         // then - there should be total of 2 projects
         val projects = tasksFacade.getProjects()
@@ -120,9 +118,9 @@ internal class ProjectUseCases {
         assertThat(projects.map { it.name }).containsExactlyInAnyOrder("INBOX", "PRIV")
 
         // and - INBOX project should have 0 tasks
-        assertThat(tasksFacade.getTasksForProject(PageRequest.of(0, 100), tasksFacade.getInbox()!!.id)).isEmpty()
+        assertThat(tasksFacade.getTasksForProject(projectId = tasksFacade.getInbox()!!.id)).isEmpty()
         // and - PRIV project has 1 task
-        assertThat(tasksFacade.getTasksForProject(PageRequest.of(0, 100), privProject)).hasSize(1)
+        assertThat(tasksFacade.getTasksForProject(project = privProject)).hasSize(1)
         // and - assign event gets published
         assertThat(inMemoryEventPublisher.events).hasSize(1)
         assertThat(inMemoryEventPublisher.events).isEqualTo(
@@ -139,7 +137,8 @@ internal class ProjectUseCases {
         tasksFacade.add(task)
 
         // when - trying to assign task to non-existing project
-        val result = tasksFacade.assignToProject(tasksFacade.getAll().first(), ProjectId())
+        val result =
+            tasksFacade.assignToProject(tasksFacade.getOpenInboxTasks().first(), ProjectId())
 
         // then - failure with proper reason should be returned
         assertThat(result.failure).isTrue
@@ -156,7 +155,7 @@ internal class ProjectUseCases {
         tasksFacade.completeProject(project)
 
         // when - trying to assign task to non-existing project
-        val result = tasksFacade.assignToProject(tasksFacade.getAll().first(), project)
+        val result = tasksFacade.assignToProject(tasksFacade.getOpenInboxTasks().first(), project)
 
         // then - failure with proper reason should be returned
         assertThat(result.failure).isTrue

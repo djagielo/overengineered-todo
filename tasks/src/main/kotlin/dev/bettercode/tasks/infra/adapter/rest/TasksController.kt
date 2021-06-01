@@ -12,11 +12,6 @@ import java.util.*
 @RestController
 class TasksController(val tasksFacade: TasksFacade) {
 
-    @GetMapping("/tasks")
-    internal fun getAllTasks(): List<TaskDto> {
-        return tasksFacade.getAll()
-    }
-
     @GetMapping("/tasks/{id}")
     internal fun getById(@PathVariable id: UUID): ResponseEntity<TaskDto> {
         return tasksFacade.get(TaskId(id))?.let {

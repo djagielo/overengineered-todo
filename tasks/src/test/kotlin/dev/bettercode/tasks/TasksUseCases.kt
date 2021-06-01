@@ -32,7 +32,7 @@ internal class TasksUseCases {
         tasks.forEach { tasksFacade.add(it) }
 
         // then - should be able to retrieve them
-        assertThat(tasksFacade.getAll())
+        assertThat(tasksFacade.getOpenInboxTasks())
             .containsExactlyInAnyOrder(*tasks.toTypedArray())
     }
 
@@ -46,7 +46,7 @@ internal class TasksUseCases {
         tasksFacade.delete(tasks.last().id)
 
         // then - the rest is still retrievable
-        assertThat(tasksFacade.getAll())
+        assertThat(tasksFacade.getOpenInboxTasks())
             .containsExactlyInAnyOrder(*tasks.take(2).toTypedArray())
     }
 

@@ -13,4 +13,5 @@ internal interface TasksQueryRepository {
     fun findAllCompletedForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto>
     fun findAllOpenForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto>
     fun findAllForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto>
+    fun findAllCompleted(pageRequest: PageRequest): Page<TaskDto>
 }

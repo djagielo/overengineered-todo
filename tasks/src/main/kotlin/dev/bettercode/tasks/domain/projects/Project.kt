@@ -15,21 +15,13 @@ internal open class Project(
 
     val completed get() = this.status == ProjectStatus.COMPLETED
 
-    fun complete(): DomainResult {
-        return complete(Instant.now())
-    }
-
-    internal fun complete(instant: Instant): DomainResult {
+    internal fun complete(instant: Instant = Instant.now()): DomainResult {
         status = ProjectStatus.COMPLETED
-        completionDate = instant;
+        completionDate = instant
         return DomainResult.success()
     }
 
-    fun reopen(): DomainResult {
-        return reopen(Instant.now())
-    }
-
-    fun reopen(instant: Instant): DomainResult {
+    fun reopen(instant: Instant = Instant.now()): DomainResult {
         if (status == ProjectStatus.COMPLETED) {
             if (!LocalDate.ofInstant(completionDate, ZoneId.of("UTC"))
                     .equals(LocalDate.ofInstant(instant, ZoneId.of("UTC")))

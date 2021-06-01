@@ -1,3 +1,5 @@
+@file:Suppress("unused", "unused", "unused", "unused", "unused", "unused", "unused")
+
 package dev.bettercode.tasks.infra.adapter.db.inmemory
 
 import dev.bettercode.tasks.ProjectId
@@ -13,9 +15,6 @@ import kotlin.math.min
 
 
 internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTasksRepository) : TasksQueryRepository {
-    fun getAllForProject(pageRequest: PageRequest, projectId: ProjectId): Page<TaskDto> {
-        return listToPage(getAllForProject(projectId).map { TaskDto.from(it)!! }, pageRequest)
-    }
 
     private fun getAllForProject(projectId: ProjectId): List<Task> {
         return inMemoryTasksDb.getAll().filter {
@@ -73,6 +72,13 @@ internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTask
                 !it.isCompleted()
             }.map { TaskDto.from(it)!! },
             pageRequest
+        )
+    }
+
+    override fun findAllCompleted(pageRequest: PageRequest): Page<TaskDto> {
+        return listToPage(
+            inMemoryTasksDb.getAllCompleted()
+                .map { TaskDto.from(it)!! }, pageRequest
         )
     }
 

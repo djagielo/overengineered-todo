@@ -1,13 +1,15 @@
+@file:Suppress("unused", "unused", "unused", "unused", "unused", "unused", "unused")
+
 package dev.bettercode.tasks
 
 import dev.bettercode.tasks.application.projects.ProjectAssignmentService
 import dev.bettercode.tasks.application.projects.ProjectCompletionService
-import dev.bettercode.tasks.application.projects.ProjectCrudService
+import dev.bettercode.tasks.application.projects.ProjectService
 import dev.bettercode.tasks.application.tasks.TaskCompletionService
-import dev.bettercode.tasks.application.tasks.TaskCrudService
+import dev.bettercode.tasks.application.tasks.TaskService
 import dev.bettercode.tasks.domain.projects.ProjectRepository
-import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectRepository
 import dev.bettercode.tasks.domain.tasks.TasksRepository
+import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryQueryRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryTasksRepository
 import dev.bettercode.tasks.query.TasksQueryRepository
@@ -23,14 +25,14 @@ class TasksConfiguration {
             val taskRepo = InMemoryTasksRepository()
             val projectRepo = InMemoryProjectRepository()
             val tasksQueryRepository = InMemoryQueryRepository(taskRepo)
-            val projectCrudService = ProjectCrudService(projectRepo)
+            val projectCrudService = ProjectService(projectRepo)
             return TasksFacade(
-                TaskCrudService(taskRepo, projectCrudService),
+                TaskService(taskRepo, projectCrudService),
                 TaskCompletionService(taskRepo),
                 projectCrudService,
                 ProjectAssignmentService(projectRepo, taskRepo, inMemoryEventPublisher),
                 ProjectCompletionService(projectRepo),
-                TasksQueryService(tasksQueryRepository)
+                TasksQueryService(tasksQueryRepository, taskRepo)
             )
         }
     }
@@ -52,17 +54,17 @@ class TasksConfiguration {
 
     @Bean
     internal fun tasksFacade(
-        tasksCrudUseCase: TaskCrudService,
+        tasksUseCase: TaskService,
         tasksCompletionService: TaskCompletionService,
-        projectCrudService: ProjectCrudService,
+        projectService: ProjectService,
         projectAssignmentService: ProjectAssignmentService,
         projectCompletionService: ProjectCompletionService,
         tasksQueryService: TasksQueryService
     ): TasksFacade {
         return TasksFacade(
-            tasksCrudUseCase,
+            tasksUseCase,
             tasksCompletionService,
-            projectCrudService,
+            projectService,
             projectAssignmentService,
             projectCompletionService,
             tasksQueryService
@@ -72,17 +74,17 @@ class TasksConfiguration {
     @Bean
     internal fun tasksCrudService(
         tasksRepository: TasksRepository,
-        projectCrudService: ProjectCrudService
-    ): TaskCrudService {
-        return TaskCrudService(tasksRepository, projectCrudService)
+        projectService: ProjectService
+    ): TaskService {
+        return TaskService(tasksRepository, projectService)
     }
 
     @Bean
     internal fun projectsCrudService(
         tasksRepository: TasksRepository,
         projectRepository: ProjectRepository
-    ): ProjectCrudService {
-        return ProjectCrudService(projectRepository)
+    ): ProjectService {
+        return ProjectService(projectRepository)
     }
 
     @Bean
@@ -99,8 +101,11 @@ class TasksConfiguration {
     }
 
     @Bean
-    internal fun tasksQueryService(tasksQueryRepository: TasksQueryRepository): TasksQueryService {
-        return TasksQueryService(tasksQueryRepository)
+    internal fun tasksQueryService(
+        tasksQueryRepository: TasksQueryRepository,
+        tasksRepository: TasksRepository
+    ): TasksQueryService {
+        return TasksQueryService(tasksQueryRepository, tasksRepository)
     }
 
     @Bean

@@ -1,4 +1,4 @@
-package dev.bettercode.tasks.application.projects;
+package dev.bettercode.tasks.application.projects
 
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
@@ -20,9 +20,8 @@ internal class ProjectAssignmentService(
                     val result = it.assignTo(project)
                     return if (result.successful) {
                         tasksRepository.save(it)
-                        val event = TaskAssignedToProject(taskId, projectId)
-                        domainEventPublisher.publish(event)
-                        DomainResult.success(event)
+                        domainEventPublisher.publish(result.events)
+                        return result
                     } else {
                         result
                     }

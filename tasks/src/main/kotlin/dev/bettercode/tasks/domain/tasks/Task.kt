@@ -2,6 +2,7 @@ package dev.bettercode.tasks.domain.tasks
 
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
+import dev.bettercode.tasks.application.projects.TaskAssignedToProject
 import dev.bettercode.tasks.domain.projects.Project
 import dev.bettercode.tasks.shared.DomainResult
 import java.time.Instant
@@ -16,11 +17,7 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
         return "Task(name='$name', id=$id)"
     }
 
-    fun complete() {
-        complete(Instant.now())
-    }
-
-    fun complete(instant: Instant) {
+    fun complete(instant: Instant = Instant.now()) {
         status = TaskStatus.COMPLETED
         completionDate = instant
     }
@@ -39,16 +36,13 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
             }
             else -> {
                 this.projectId = project.id
-                DomainResult.success()
+                val event = TaskAssignedToProject(this.id, project.id)
+                DomainResult.success(event)
             }
         }
     }
 
-    fun reopen(): DomainResult {
-        return reopen(Instant.now())
-    }
-
-    fun reopen(instant: Instant): DomainResult {
+    fun reopen(instant: Instant = Instant.now()): DomainResult {
         if (status == TaskStatus.COMPLETED) {
             if (!LocalDate.ofInstant(completionDate, ZoneId.of("UTC"))
                     .equals(LocalDate.ofInstant(instant, ZoneId.of("UTC")))
