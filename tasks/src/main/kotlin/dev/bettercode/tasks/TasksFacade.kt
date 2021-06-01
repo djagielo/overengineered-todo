@@ -7,6 +7,7 @@ import dev.bettercode.tasks.application.tasks.TaskCompletionService
 import dev.bettercode.tasks.application.tasks.TaskService
 import dev.bettercode.tasks.domain.projects.Project
 import dev.bettercode.tasks.domain.tasks.Task
+import dev.bettercode.tasks.query.ProjectsQueryService
 import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.DomainResult
 import org.springframework.data.domain.Page
@@ -18,7 +19,8 @@ class TasksFacade internal constructor(
     private val projectService: ProjectService,
     private val projectAssignmentService: ProjectAssignmentService,
     private val projectCompletionService: ProjectCompletionService,
-    private val tasksQueryService: TasksQueryService
+    private val tasksQueryService: TasksQueryService,
+    private val projectsQueryService: ProjectsQueryService
 ) {
     fun add(task: TaskDto): TaskDto {
         return TaskDto.from(taskService.add(Task(id = task.id, name = task.name)))!!
@@ -62,8 +64,8 @@ class TasksFacade internal constructor(
         }
     }
 
-    fun getProjects(): List<ProjectDto> {
-        return projectService.getAll().map { ProjectDto.from(it)!! }
+    fun getProjects(): Page<ProjectDto> {
+        return projectsQueryService.getAll()
     }
 
     fun addProject(project: ProjectDto): ProjectDto {

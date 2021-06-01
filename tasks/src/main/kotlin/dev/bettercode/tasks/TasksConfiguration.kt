@@ -10,8 +10,10 @@ import dev.bettercode.tasks.application.tasks.TaskService
 import dev.bettercode.tasks.domain.projects.ProjectRepository
 import dev.bettercode.tasks.domain.tasks.TasksRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectRepository
+import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectsQueryRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryQueryRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryTasksRepository
+import dev.bettercode.tasks.query.ProjectsQueryService
 import dev.bettercode.tasks.query.TasksQueryRepository
 import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
@@ -25,14 +27,17 @@ class TasksConfiguration {
             val taskRepo = InMemoryTasksRepository()
             val projectRepo = InMemoryProjectRepository()
             val tasksQueryRepository = InMemoryQueryRepository(taskRepo)
+            val projectsQueryRepository = InMemoryProjectsQueryRepository(projectRepo)
             val projectCrudService = ProjectService(projectRepo)
+            val projectsQueryService = ProjectsQueryService(projectsQueryRepository)
             return TasksFacade(
                 TaskService(taskRepo, projectCrudService),
                 TaskCompletionService(taskRepo),
                 projectCrudService,
                 ProjectAssignmentService(projectRepo, taskRepo, inMemoryEventPublisher),
                 ProjectCompletionService(projectRepo),
-                TasksQueryService(tasksQueryRepository, taskRepo)
+                TasksQueryService(tasksQueryRepository, taskRepo),
+                projectsQueryService
             )
         }
     }
@@ -59,15 +64,17 @@ class TasksConfiguration {
         projectService: ProjectService,
         projectAssignmentService: ProjectAssignmentService,
         projectCompletionService: ProjectCompletionService,
-        tasksQueryService: TasksQueryService
+        tasksQueryService: TasksQueryService,
+        projectsQueryService: ProjectsQueryService
     ): TasksFacade {
         return TasksFacade(
-            tasksUseCase,
-            tasksCompletionService,
-            projectService,
-            projectAssignmentService,
-            projectCompletionService,
-            tasksQueryService
+            taskService = tasksUseCase,
+            taskCompletionService = tasksCompletionService,
+            projectService = projectService,
+            projectAssignmentService = projectAssignmentService,
+            projectCompletionService = projectCompletionService,
+            tasksQueryService = tasksQueryService,
+            projectsQueryService = projectsQueryService
         )
     }
 

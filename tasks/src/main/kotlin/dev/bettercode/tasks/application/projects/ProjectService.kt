@@ -16,10 +16,6 @@ internal class ProjectService(
         projectRepository.delete(projectId)
     }
 
-    fun getAll(): List<Project> {
-        return projectRepository.getAll()
-    }
-
     fun get(projectId: ProjectId): Project? {
         return projectRepository.get(projectId)
     }

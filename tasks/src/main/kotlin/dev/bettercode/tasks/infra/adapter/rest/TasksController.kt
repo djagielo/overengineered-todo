@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package dev.bettercode.tasks.infra.adapter.rest
 
 import dev.bettercode.tasks.*
@@ -34,7 +36,7 @@ class TasksController(val tasksFacade: TasksFacade) {
 
 
     @GetMapping("/projects")
-    internal fun getAllProjects(): List<ProjectDto> {
+    internal fun getAllProjects(): Page<ProjectDto> {
         return tasksFacade.getProjects()
     }
 
