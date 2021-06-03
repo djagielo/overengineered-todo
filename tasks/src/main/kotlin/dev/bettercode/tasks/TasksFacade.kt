@@ -59,9 +59,7 @@ class TasksFacade internal constructor(
     }
 
     fun getProject(projectId: ProjectId): ProjectDto? {
-        return projectService.get(projectId)?.let {
-            ProjectDto.from(it)
-        }
+        return projectsQueryService.findById(projectId)
     }
 
     fun getProjects(): Page<ProjectDto> {
@@ -93,7 +91,7 @@ class TasksFacade internal constructor(
     }
 
     fun getTasksForProject(pageRequest: PageRequest = PageRequest.of(0, 100), projectId: ProjectId): Page<TaskDto> {
-        return projectService.get(projectId)?.let {
+        return projectsQueryService.findById(projectId)?.let {
             return tasksQueryService.findAllForProject(pageRequest, projectId)
         } ?: Page.empty()
     }

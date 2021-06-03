@@ -3,11 +3,13 @@ package dev.bettercode.tasks.application.tasks
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
 import dev.bettercode.tasks.application.projects.ProjectService
+import dev.bettercode.tasks.domain.projects.ProjectRepository
 import dev.bettercode.tasks.domain.tasks.Task
 import dev.bettercode.tasks.domain.tasks.TasksRepository
 
 internal class TaskService(
     private val tasksRepository: TasksRepository,
+    private val projectRepository: ProjectRepository,
     private val projectService: ProjectService
 ) {
     fun add(task: Task): Task {
@@ -16,7 +18,7 @@ internal class TaskService(
     }
 
     fun addTaskForAProject(task: Task, projectId: ProjectId): Task? {
-        return projectService.get(projectId)?.let {
+        return projectRepository.get(projectId)?.let {
             task.assignTo(it)
             return tasksRepository.save(task)
         }

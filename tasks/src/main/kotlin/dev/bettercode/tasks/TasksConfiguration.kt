@@ -13,6 +13,7 @@ import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectsQueryRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryQueryRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryTasksRepository
+import dev.bettercode.tasks.query.ProjectsQueryRepository
 import dev.bettercode.tasks.query.ProjectsQueryService
 import dev.bettercode.tasks.query.TasksQueryRepository
 import dev.bettercode.tasks.query.TasksQueryService
@@ -28,12 +29,12 @@ class TasksConfiguration {
             val projectRepo = InMemoryProjectRepository()
             val tasksQueryRepository = InMemoryQueryRepository(taskRepo)
             val projectsQueryRepository = InMemoryProjectsQueryRepository(projectRepo)
-            val projectCrudService = ProjectService(projectRepo)
+            val projectService = ProjectService(projectRepo)
             val projectsQueryService = ProjectsQueryService(projectsQueryRepository)
             return TasksFacade(
-                TaskService(taskRepo, projectCrudService),
+                TaskService(taskRepo, projectRepo, projectService),
                 TaskCompletionService(taskRepo),
-                projectCrudService,
+                projectService,
                 ProjectAssignmentService(projectRepo, taskRepo, inMemoryEventPublisher),
                 ProjectCompletionService(projectRepo),
                 TasksQueryService(tasksQueryRepository, taskRepo),
@@ -50,6 +51,11 @@ class TasksConfiguration {
     @Bean
     internal fun projectsRepository(): InMemoryProjectRepository {
         return InMemoryProjectRepository()
+    }
+
+    @Bean
+    internal fun projectsQueryRepository(projectsRepo: ProjectRepository): ProjectsQueryRepository {
+        return InMemoryProjectsQueryRepository(projectsRepo)
     }
 
     @Bean
@@ -81,9 +87,10 @@ class TasksConfiguration {
     @Bean
     internal fun tasksCrudService(
         tasksRepository: TasksRepository,
+        projectRepository: ProjectRepository,
         projectService: ProjectService
     ): TaskService {
-        return TaskService(tasksRepository, projectService)
+        return TaskService(tasksRepository, projectRepository, projectService)
     }
 
     @Bean
@@ -118,5 +125,10 @@ class TasksConfiguration {
     @Bean
     internal fun projectCompletionService(projectRepository: ProjectRepository): ProjectCompletionService {
         return ProjectCompletionService(projectRepository)
+    }
+
+    @Bean
+    internal fun projectsQueryService(projectsQueryRepository: ProjectsQueryRepository): ProjectsQueryService {
+        return ProjectsQueryService(projectsQueryRepository)
     }
 }

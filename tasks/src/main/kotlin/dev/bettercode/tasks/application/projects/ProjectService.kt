@@ -16,10 +16,6 @@ internal class ProjectService(
         projectRepository.delete(projectId)
     }
 
-    fun get(projectId: ProjectId): Project? {
-        return projectRepository.get(projectId)
-    }
-
     fun getInboxProject(): Project {
         val inbox = projectRepository.getInboxProject()
         return inbox ?: projectRepository.add(Inbox())
