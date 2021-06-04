@@ -32,7 +32,14 @@ internal class InMemoryProjectRepository: ProjectRepository {
         db.remove(projectId.uuid)
     }
 
-    override fun getAll(): List<Project> {
+    fun getAll(): List<Project> {
         return ArrayList(db.values)
+    }
+
+    override fun createInbox(): Inbox {
+        return Inbox().let {
+            db[UUID.randomUUID()] = it
+            return it
+        }
     }
 }

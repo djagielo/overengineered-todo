@@ -8,5 +8,5 @@ internal interface ProjectRepository {
     fun getInboxProject(): Project?
     fun save(project: Project)
     fun delete(projectId: ProjectId)
-    fun getAll(): List<Project>
+    fun createInbox(): Inbox
 }

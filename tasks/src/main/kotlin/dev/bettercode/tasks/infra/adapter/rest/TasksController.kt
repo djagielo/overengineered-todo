@@ -40,11 +40,22 @@ class TasksController(val tasksFacade: TasksFacade) {
         return tasksFacade.getProjects()
     }
 
+    @PostMapping("/projects")
+    internal fun createProject(@RequestBody projectDto: ProjectDto) {
+        tasksFacade.addProject(projectDto)
+    }
+
     @GetMapping("/projects/{id}")
     internal fun getProject(@PathVariable id: UUID): ResponseEntity<ProjectDto> {
         return tasksFacade.getProject(ProjectId(id))?.let {
             ResponseEntity.ok(it)
         } ?: ResponseEntity.notFound().build()
+    }
+
+    @DeleteMapping("/projects/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    internal fun deleteProject(@PathVariable id: UUID) {
+        tasksFacade.deleteProject(ProjectId(id))
     }
 
     @GetMapping("/projects/{id}/tasks")

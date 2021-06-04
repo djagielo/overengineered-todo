@@ -21,6 +21,8 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
 	implementation(project(":tasks"))
+
+	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 }
 
 allprojects {

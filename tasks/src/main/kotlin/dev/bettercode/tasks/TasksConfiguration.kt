@@ -9,6 +9,7 @@ import dev.bettercode.tasks.application.tasks.TaskCompletionService
 import dev.bettercode.tasks.application.tasks.TaskService
 import dev.bettercode.tasks.domain.projects.ProjectRepository
 import dev.bettercode.tasks.domain.tasks.TasksRepository
+import dev.bettercode.tasks.infra.adapter.db.JdbcProjectRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectsQueryRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryQueryRepository
@@ -20,6 +21,7 @@ import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.jdbc.core.JdbcTemplate
 
 @Configuration
 class TasksConfiguration {
@@ -49,12 +51,12 @@ class TasksConfiguration {
     }
 
     @Bean
-    internal fun projectsRepository(): InMemoryProjectRepository {
-        return InMemoryProjectRepository()
+    internal fun projectsRepository(jdbcTemplate: JdbcTemplate): ProjectRepository {
+        return JdbcProjectRepository(jdbcTemplate)
     }
 
     @Bean
-    internal fun projectsQueryRepository(projectsRepo: ProjectRepository): ProjectsQueryRepository {
+    internal fun projectsQueryRepository(projectsRepo: InMemoryProjectRepository): ProjectsQueryRepository {
         return InMemoryProjectsQueryRepository(projectsRepo)
     }
 

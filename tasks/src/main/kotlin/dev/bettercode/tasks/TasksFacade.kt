@@ -74,7 +74,7 @@ class TasksFacade internal constructor(
         deleteProject(project.id)
     }
 
-    private fun deleteProject(projectId: ProjectId) {
+    fun deleteProject(projectId: ProjectId) {
         projectService.delete(projectId)
     }
 
