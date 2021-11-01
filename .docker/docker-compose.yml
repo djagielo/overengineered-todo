@@ -2,6 +2,7 @@ version: "3.9"
 services:
   db:
     image: "mariadb:10.6"
+    command: mysqld --default-authentication-plugin=mysql_native_password
     environment:
       - MARIADB_ROOT_PASSWORD=password
       - MARIADB_DATABASE=ambicion

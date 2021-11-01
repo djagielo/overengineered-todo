@@ -1,15 +1,20 @@
 package dev.bettercode.tasks
 
 import dev.bettercode.bettercode.tasks.TasksFixtures
+import dev.bettercode.tasks.application.tasks.TaskCreated
+import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.Test
+import java.time.Clock
 import java.time.Instant
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 internal class TasksUseCases {
 
-    private val tasksFacade: TasksFacade = TasksConfiguration.tasksFacade()
+    private val eventPublisher: InMemoryEventPublisher = InMemoryEventPublisher()
+    private val tasksFacade: TasksFacade = TasksConfiguration.tasksFacade(eventPublisher)
 
     @Test
     fun `should be able to create and get task`() {
@@ -21,6 +26,7 @@ internal class TasksUseCases {
 
         // then - should get the task by id
         assertThat(tasksFacade.get(task.id)).isEqualTo(task)
+        assertThat(eventPublisher.events).containsExactlyInAnyOrder(TaskCreated(task.id))
     }
 
     @Test
@@ -34,6 +40,7 @@ internal class TasksUseCases {
         // then - should be able to retrieve them
         assertThat(tasksFacade.getOpenInboxTasks())
             .containsExactlyInAnyOrder(*tasks.toTypedArray())
+        assertThat(eventPublisher.events).containsExactlyInAnyOrder(*tasks.map { TaskCreated(it.id) }.toTypedArray())
     }
 
     @Test
@@ -57,7 +64,7 @@ internal class TasksUseCases {
         tasksFacade.add(task)
 
         // when - marking task as completed
-        tasksFacade.complete(task.id)
+        tasksFacade.complete(task, Clock.systemDefaultZone())
 
         // then - the task should be marked as completed and completion date should be set
         val completedTask = tasksFacade.get(task.id)
@@ -82,19 +89,19 @@ internal class TasksUseCases {
     fun `fail to undo task completion different day`() {
         // given - a saved task
         val task = TasksFixtures.aNoOfTasks(1).first()
-        addAndComplete(task)
+        addAndComplete(task, Clock.fixed(Instant.now(), ZoneId.systemDefault()))
 
         // when - undoing task completion
-        tasksFacade.reopenTask(task)
+        tasksFacade.reopenTask(task, Clock.fixed(Instant.now().plus(1, ChronoUnit.DAYS), ZoneId.systemDefault()))
 
         // then - the task should be marked as completed and completion date should be set
         val result = tasksFacade.get(task.id)
-        assertThat(result?.completionDate).isNull()
+        assertThat(result?.completionDate).`as`("Completion date shouldn't be cleared").isNotNull
     }
 
-    private fun addAndComplete(task: TaskDto) {
+    private fun addAndComplete(task: TaskDto, clock: Clock = Clock.systemDefaultZone()) {
         tasksFacade.add(task)
-        tasksFacade.complete(task)
+        tasksFacade.complete(task, clock)
     }
 
     @Test
@@ -105,9 +112,7 @@ internal class TasksUseCases {
 
         // when - marking task as completed
         val toComplete = listOf(tasks.first(), tasks.last(), tasks[5])
-        toComplete.forEach {
-            tasksFacade.complete(it.id)
-        }
+        toComplete.forEach(tasksFacade::complete)
 
         // then - the task should be marked as completed and completion date should be set
         val completedTasks = tasksFacade.getAllCompleted()

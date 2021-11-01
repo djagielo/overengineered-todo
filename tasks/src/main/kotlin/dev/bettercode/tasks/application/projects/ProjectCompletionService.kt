@@ -7,9 +7,11 @@ import dev.bettercode.tasks.shared.DomainResult
 internal class ProjectCompletionService(private val projectRepository: ProjectRepository) {
     fun complete(projectId: ProjectId): DomainResult {
         return projectRepository.get(projectId)?.let {
-            it.complete()
-            projectRepository.save(it)
-            DomainResult.success()
+            val result = it.complete()
+            if (result.successful) {
+                projectRepository.save(it)
+            }
+            return result
         } ?: DomainResult.failure("No project with given id")
     }
 

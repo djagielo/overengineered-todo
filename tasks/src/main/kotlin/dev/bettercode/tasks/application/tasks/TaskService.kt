@@ -6,15 +6,24 @@ import dev.bettercode.tasks.application.projects.ProjectService
 import dev.bettercode.tasks.domain.projects.ProjectRepository
 import dev.bettercode.tasks.domain.tasks.Task
 import dev.bettercode.tasks.domain.tasks.TasksRepository
+import dev.bettercode.tasks.shared.DomainEventPublisher
+import dev.bettercode.tasks.shared.DomainResult
 
 internal class TaskService(
     private val tasksRepository: TasksRepository,
     private val projectRepository: ProjectRepository,
-    private val projectService: ProjectService
+    private val projectService: ProjectService,
+    private val eventPublisher: DomainEventPublisher
 ) {
-    fun add(task: Task): Task {
-        task.assignTo(projectService.getInboxProject())
-        return tasksRepository.add(task)
+    fun add(task: Task): DomainResult {
+        val result = task.assignTo(projectService.getInboxProject())
+        return if (result.successful) {
+            tasksRepository.add(task)
+            eventPublisher.publish(TaskCreated(taskId = task.id))
+            DomainResult.success()
+        } else {
+            result;
+        }
     }
 
     fun addTaskForAProject(task: Task, projectId: ProjectId): Task? {

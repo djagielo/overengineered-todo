@@ -36,8 +36,7 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
             }
             else -> {
                 this.projectId = project.id
-                val event = TaskAssignedToProject(this.id, project.id)
-                DomainResult.success(event)
+                DomainResult.success()
             }
         }
     }
@@ -56,5 +55,25 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
         }
 
         return DomainResult.success()
+    }
+
+    fun toSnapshot(): TaskSnapshot {
+        return TaskSnapshot(
+            id = id.uuid,
+            name = name,
+            completionDate = completionDate,
+            status = status,
+            projectId = projectId?.uuid
+        )
+    }
+
+    companion object {
+        fun fromSnapshot(taskSnapshot: TaskSnapshot): Task {
+            val projectId = taskSnapshot.projectId?.let { ProjectId(it) }
+            val task = Task(taskSnapshot.name, TaskId(taskSnapshot.id), projectId)
+            task.completionDate = taskSnapshot.completionDate
+            task.status = taskSnapshot.status
+            return task
+        }
     }
 }

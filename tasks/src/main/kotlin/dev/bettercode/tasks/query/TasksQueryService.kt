@@ -5,6 +5,7 @@ import dev.bettercode.tasks.TaskDto
 import dev.bettercode.tasks.TaskId
 import dev.bettercode.tasks.domain.projects.Project
 import dev.bettercode.tasks.domain.tasks.TasksRepository
+import dev.bettercode.tasks.infra.adapter.db.TasksQueryRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 
@@ -28,6 +29,6 @@ internal class TasksQueryService(
     }
 
     fun findAllForProject(pageRequest: PageRequest, projectId: ProjectId): Page<TaskDto> {
-        return this.tasksQueryRepository.findAllForProject(pageRequest, projectId)
+        return this.tasksQueryRepository.findAllByProjectId(pageRequest, projectId)
     }
 }

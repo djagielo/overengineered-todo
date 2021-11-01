@@ -1,11 +1,10 @@
 
-
-CREATE TABLE projects (
+CREATE TABLE IF NOT EXISTS projects (
     id VARCHAR(50) NOT NULL PRIMARY KEY,
     name VARCHAR(100) NOT NULL
 );
 
-CREATE TABLE inboxes (
+CREATE TABLE IF NOT EXISTS inboxes (
     id MEDIUMINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
     projectId VARCHAR(50),
     tenantId int default 0,
@@ -13,7 +12,7 @@ CREATE TABLE inboxes (
     CONSTRAINT fk_projects_inbox FOREIGN KEY (projectId) REFERENCES projects(id)
 );
 
-CREATE TABLE tasks (
+CREATE TABLE IF NOT EXISTS tasks (
     id VARCHAR(50) NOT NULL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     status VARCHAR(50),

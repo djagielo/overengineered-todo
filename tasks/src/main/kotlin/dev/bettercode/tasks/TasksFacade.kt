@@ -12,6 +12,7 @@ import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.DomainResult
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import java.time.Clock
 
 class TasksFacade internal constructor(
     private val taskService: TaskService,
@@ -22,20 +23,20 @@ class TasksFacade internal constructor(
     private val tasksQueryService: TasksQueryService,
     private val projectsQueryService: ProjectsQueryService
 ) {
-    fun add(task: TaskDto): TaskDto {
-        return TaskDto.from(taskService.add(Task(id = task.id, name = task.name)))!!
+    fun add(task: TaskDto): DomainResult {
+        return taskService.add(Task(id = task.id, name = task.name))
     }
 
     fun delete(id: TaskId) {
         return taskService.delete(id)
     }
 
-    fun complete(id: TaskId) {
-        taskCompletionService.complete(id)
+    private fun complete(id: TaskId, clock: Clock) {
+        taskCompletionService.complete(id, clock)
     }
 
-    fun complete(task: TaskDto) {
-        this.complete(task.id)
+    fun complete(task: TaskDto, clock: Clock = Clock.systemDefaultZone()) {
+        this.complete(task.id, clock)
     }
 
     fun get(id: TaskId): TaskDto? {
@@ -50,12 +51,12 @@ class TasksFacade internal constructor(
         return tasksQueryService.findAllCompleted(pageRequest)
     }
 
-    fun reopenTask(task: TaskDto) {
-        this.reopenTask(task.id)
+    fun reopenTask(task: TaskDto, clock: Clock = Clock.systemDefaultZone()) {
+        this.reopenTask(task.id, clock)
     }
 
-    private fun reopenTask(id: TaskId) {
-        taskCompletionService.reopen(id)
+    private fun reopenTask(id: TaskId, clock: Clock) {
+        taskCompletionService.reopen(id, clock)
     }
 
     fun getProject(projectId: ProjectId): ProjectDto? {

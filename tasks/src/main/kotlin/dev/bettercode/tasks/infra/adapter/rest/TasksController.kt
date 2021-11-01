@@ -23,9 +23,14 @@ class TasksController(val tasksFacade: TasksFacade) {
 
     @PostMapping("/tasks")
     internal fun create(@RequestBody taskRequest: TaskRequest): ResponseEntity<TaskDto> {
-        val createdTask = tasksFacade.add(taskRequest.toTaskDto())
-        return ResponseEntity.created(URI.create("tasks/${createdTask.id.uuid}"))
-            .body(createdTask)
+        val taskDto = taskRequest.toTaskDto()
+        val result = tasksFacade.add(taskDto)
+        if (result.successful) {
+            return ResponseEntity.created(URI.create("tasks/${taskDto.id.uuid}"))
+                .body(taskDto)
+        } else {
+            return ResponseEntity.badRequest().build();
+        }
     }
 
     @DeleteMapping("/tasks/{id}")
@@ -33,7 +38,6 @@ class TasksController(val tasksFacade: TasksFacade) {
     internal fun delete(@PathVariable id: UUID) {
         tasksFacade.delete(TaskId(id))
     }
-
 
     @GetMapping("/projects")
     internal fun getAllProjects(): Page<ProjectDto> {
@@ -68,5 +72,6 @@ class TasksController(val tasksFacade: TasksFacade) {
     @ExceptionHandler(Exception::class)
     fun handleException(ex: Exception) {
         println(ex)
+        println(ex.stackTrace)
     }
 }

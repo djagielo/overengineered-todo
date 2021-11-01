@@ -4,7 +4,8 @@ import io.vavr.control.Either
 import io.vavr.control.Either.left
 import io.vavr.control.Either.right
 
-class DomainResult private constructor(private val result: Either<Failure, Success>){
+class DomainResult private constructor(private val result: Either<Failure, Success>) {
+
     companion object {
         fun success(): DomainResult {
             return success(listOf())

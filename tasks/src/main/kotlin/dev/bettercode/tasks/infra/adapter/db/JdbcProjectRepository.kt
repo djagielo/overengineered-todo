@@ -28,14 +28,16 @@ internal class JdbcProjectRepository(private val jdbcTemplate: JdbcTemplate) : P
     }
 
     private fun mapRowToProject() = RowMapper { rs, _ ->
-        Project(name = rs.getString(2), id = ProjectId(UUID.fromString(rs.getString(1))))
+        Project(name = rs.getString("name"), id = ProjectId(UUID.fromString(rs.getString("id"))))
     }
 
     override fun getInboxProject(): Project? {
-        return Try.of { jdbcTemplate.queryForObject(
-            "select p.id,name from projects p join inboxes i on p.id=i.projectId where i.tenantId=0",
-            mapRowToProject()
-        ) }.recover(EmptyResultDataAccessException::class.java) { null }.get()
+        return Try.of {
+            jdbcTemplate.queryForObject(
+                "select p.id,name from projects p join inboxes i on p.id=i.projectId where i.tenantId=0",
+                mapRowToProject()
+            )
+        }.recover(EmptyResultDataAccessException::class.java) { null }.get()
     }
 
     override fun save(project: Project) {
@@ -50,7 +52,7 @@ internal class JdbcProjectRepository(private val jdbcTemplate: JdbcTemplate) : P
     }
 
     override fun createInbox(): Inbox {
-        return Inbox().let {
+        Inbox().let {
             add(it)
             jdbcTemplate.update("insert into inboxes (projectId) values (?);", it.id.uuid.toString())
             return it

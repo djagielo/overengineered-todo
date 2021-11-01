@@ -20,7 +20,7 @@ internal class ProjectAssignmentService(
                     val result = it.assignTo(project)
                     return if (result.successful) {
                         tasksRepository.save(it)
-                        domainEventPublisher.publish(result.events)
+                        domainEventPublisher.publish(TaskAssignedToProject(taskId, projectId))
                         return result
                     } else {
                         result

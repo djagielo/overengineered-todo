@@ -45,7 +45,7 @@ internal class ProjectTest {
 
     @MethodSource("reopenSource")
     @ParameterizedTest
-    fun `project can be reopen withing the same day`(
+    fun `project can be reopen within the same day`(
         completionDate: Instant,
         reopenDate: Instant
     ) {

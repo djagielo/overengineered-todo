@@ -7,7 +7,7 @@ import dev.bettercode.tasks.domain.projects.ProjectRepository
 import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
-internal class InMemoryProjectRepository: ProjectRepository {
+internal class InMemoryProjectRepository : ProjectRepository {
     private val db = ConcurrentHashMap<UUID, Project>()
     override fun add(project: Project): Project {
         db[project.id.uuid] = project
@@ -36,9 +36,9 @@ internal class InMemoryProjectRepository: ProjectRepository {
         return ArrayList(db.values)
     }
 
-    override fun createInbox(): Inbox {
-        return Inbox().let {
-            db[UUID.randomUUID()] = it
+    override fun createInbox(): Project {
+        Project(name = "INBOX").let {
+            db[it.id.uuid] = it
             return it
         }
     }

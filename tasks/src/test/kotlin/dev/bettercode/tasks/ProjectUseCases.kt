@@ -4,6 +4,7 @@ import dev.bettercode.bettercode.tasks.TasksFixtures
 import dev.bettercode.tasks.application.projects.TaskAssignedToProject
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 internal class ProjectUseCases {
@@ -11,6 +12,11 @@ internal class ProjectUseCases {
     private val inMemoryEventPublisher = InMemoryEventPublisher()
     private val tasksFacade: TasksFacade =
         TasksConfiguration.tasksFacade(inMemoryEventPublisher = inMemoryEventPublisher)
+
+    @BeforeEach
+    fun cleanUpEvents() {
+        this.inMemoryEventPublisher.clear()
+    }
 
     @Test
     fun `create project`() {
@@ -122,11 +128,8 @@ internal class ProjectUseCases {
         // and - PRIV project has 1 task
         assertThat(tasksFacade.getTasksForProject(project = privProject)).hasSize(1)
         // and - assign event gets published
-        assertThat(inMemoryEventPublisher.events).hasSize(1)
-        assertThat(inMemoryEventPublisher.events).isEqualTo(
-            listOf(
-                TaskAssignedToProject(task.id, privProject.id)
-            )
+        assertThat(inMemoryEventPublisher.events).contains(
+            TaskAssignedToProject(task.id, privProject.id)
         )
     }
 
@@ -196,6 +199,22 @@ internal class ProjectUseCases {
         // then - failure with proper reason should be returned
         assertThat(result.successful).isTrue
     }
+
+    @Test
+    fun `project that had been completed already, cannot be completed again`() {
+        // given - a project that's completed
+        val project = tasksFacade.addProject(ProjectDto("COMPLETED_PROJECT"))
+        // and a task gets reopened
+        tasksFacade.completeProject(project)
+
+        // when - trying to complete it again
+        val result = tasksFacade.completeProject(project)
+
+        // then - failure with proper reason should be returned
+        assertThat(result.successful).isFalse
+        assertThat(result.reason).isEqualTo("Project is already completed")
+    }
+
 
     // project deletion with forced flag deletes its tasks also
 
