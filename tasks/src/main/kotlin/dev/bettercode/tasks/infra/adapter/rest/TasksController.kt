@@ -3,6 +3,8 @@
 package dev.bettercode.tasks.infra.adapter.rest
 
 import dev.bettercode.tasks.*
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
@@ -13,6 +15,7 @@ import java.util.*
 
 @RestController
 class TasksController(val tasksFacade: TasksFacade) {
+    val logger: Logger = LoggerFactory.getLogger(TasksController::class.java)
 
     @GetMapping("/tasks/{id}")
     internal fun getById(@PathVariable id: UUID): ResponseEntity<TaskDto> {
@@ -37,6 +40,14 @@ class TasksController(val tasksFacade: TasksFacade) {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     internal fun delete(@PathVariable id: UUID) {
         tasksFacade.delete(TaskId(id))
+    }
+
+    @PutMapping("/tasks/{id}/status")
+    internal fun complete(@PathVariable id: UUID, @RequestBody taskCompletionRequest: TaskCompletionRequest) {
+        if (taskCompletionRequest.completed)
+            tasksFacade.complete(TaskId(id))
+        else
+            tasksFacade.reopenTask(TaskId(id))
     }
 
     @GetMapping("/projects")
@@ -71,7 +82,6 @@ class TasksController(val tasksFacade: TasksFacade) {
 
     @ExceptionHandler(Exception::class)
     fun handleException(ex: Exception) {
-        println(ex)
-        println(ex.stackTrace)
+        logger.error(ex.message, ex)
     }
 }

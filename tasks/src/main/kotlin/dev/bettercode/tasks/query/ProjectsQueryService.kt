@@ -14,7 +14,7 @@ internal class ProjectsQueryService(private val projectsQueryRepository: Project
     }
 
     fun findById(projectId: ProjectId): ProjectDto? {
-        return projectsQueryRepository.findById(projectId).let {
+        return projectsQueryRepository.findById(projectId.uuid).let {
             ProjectDto.from(it)
         }
     }

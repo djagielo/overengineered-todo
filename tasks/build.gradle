@@ -5,6 +5,13 @@ plugins {
     id "org.jetbrains.kotlin.plugin.spring"
 
     id "io.spring.dependency-management"
+    id "org.jetbrains.kotlin.plugin.noarg"
+}
+
+apply plugin: "kotlin-noarg"
+
+noArg {
+    annotation("javax.persistence.Entity")
 }
 
 bootJar {

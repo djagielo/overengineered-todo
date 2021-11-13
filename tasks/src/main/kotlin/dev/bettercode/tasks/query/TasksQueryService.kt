@@ -21,14 +21,20 @@ internal class TasksQueryService(
     }
 
     fun findAllOpen(pageRequest: PageRequest, project: Project): Page<TaskDto> {
-        return tasksQueryRepository.findAllOpenForProject(pageRequest, project.id)
+        return tasksQueryRepository.findAllOpenForProject(pageRequest, project.id.uuid).map {
+            TaskDto.from(it)
+        }
     }
 
     fun findAllCompleted(pageRequest: PageRequest): Page<TaskDto> {
-        return tasksQueryRepository.findAllCompleted(pageRequest)
+        return tasksQueryRepository.findAllCompleted(pageRequest).map {
+            TaskDto.from(it)
+        }
     }
 
     fun findAllForProject(pageRequest: PageRequest, projectId: ProjectId): Page<TaskDto> {
-        return this.tasksQueryRepository.findAllByProjectId(pageRequest, projectId)
+        return this.tasksQueryRepository.findAllByProjectId(pageRequest, projectId.uuid).map {
+            TaskDto.from(it)
+        }
     }
 }

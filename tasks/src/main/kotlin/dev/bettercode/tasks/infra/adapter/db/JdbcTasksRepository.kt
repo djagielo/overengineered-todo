@@ -15,7 +15,7 @@ internal class JdbcTasksRepository(private val jdbcTemplate: JdbcTemplate) : Tas
     override fun add(task: Task): Task {
         val snapshot = task.toSnapshot()
         jdbcTemplate.update(
-            "INSERT INTO tasks (id, name, status, completion_date, projectId) values (?,?,?,?,?)",
+            "INSERT INTO tasks (id, name, status, completion_date, project_id) values (?,?,?,?,?)",
             snapshot.id.toString(),
             snapshot.name,
             snapshot.status.toString(),
@@ -28,8 +28,9 @@ internal class JdbcTasksRepository(private val jdbcTemplate: JdbcTemplate) : Tas
     override fun get(id: TaskId): Task? {
         val taskSnapshot = Try.of {
             jdbcTemplate.queryForObject(
-                "select id, name, status, completion_date, projectId where id=?",
-                mapRowToTask()
+                "select id, name, status, completion_date, project_id from tasks where id=?",
+                mapRowToTask(),
+                id.uuid.toString()
             )
         }.recover(EmptyResultDataAccessException::class.java) { null }.get()
 
@@ -41,15 +42,15 @@ internal class JdbcTasksRepository(private val jdbcTemplate: JdbcTemplate) : Tas
             id = UUID.fromString(rs.getString("id")),
             name = rs.getString("name"),
             status = TaskStatus.valueOf(rs.getString("status")),
-            completionDate = rs.getTimestamp("completion_date").toInstant(),
-            projectId = UUID.fromString(rs.getString("projectId"))
+            completionDate = rs.getTimestamp("completion_date")?.toInstant(),
+            projectId = UUID.fromString(rs.getString("project_id"))
         )
     }
 
     override fun save(task: Task): Task {
         val snapshot = task.toSnapshot()
         jdbcTemplate.update(
-            "UPDATE tasks SET name=?, status=?, completion_date=?, projectId = ? where id=?",
+            "UPDATE tasks SET name=?, status=?, completion_date=?, project_id = ? where id=?",
             snapshot.name,
             snapshot.status.toString(),
             snapshot.completionDate,

@@ -6,10 +6,10 @@ CREATE TABLE IF NOT EXISTS projects (
 
 CREATE TABLE IF NOT EXISTS inboxes (
     id MEDIUMINT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-    projectId VARCHAR(50),
+    project_id VARCHAR(50),
     tenantId int default 0,
-    CONSTRAINT UC_inbox UNIQUE (projectId,tenantId),
-    CONSTRAINT fk_projects_inbox FOREIGN KEY (projectId) REFERENCES projects(id)
+    CONSTRAINT UC_inbox UNIQUE (project_id,tenantId),
+    CONSTRAINT fk_projects_inbox FOREIGN KEY (project_id) REFERENCES projects(id)
 );
 
 CREATE TABLE IF NOT EXISTS tasks (
@@ -17,7 +17,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     name VARCHAR(100) NOT NULL,
     status VARCHAR(50),
     completion_date DATE,
-    projectId VARCHAR(50),
+    project_id VARCHAR(50),
 
-    CONSTRAINT fk_projects FOREIGN KEY (projectId) REFERENCES projects(id)
+    CONSTRAINT fk_projects FOREIGN KEY (project_id) REFERENCES projects(id)
 );

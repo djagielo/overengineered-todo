@@ -34,7 +34,7 @@ internal class JdbcProjectRepository(private val jdbcTemplate: JdbcTemplate) : P
     override fun getInboxProject(): Project? {
         return Try.of {
             jdbcTemplate.queryForObject(
-                "select p.id,name from projects p join inboxes i on p.id=i.projectId where i.tenantId=0",
+                "select p.id,name from projects p join inboxes i on p.id=i.project_id where i.tenantId=0",
                 mapRowToProject()
             )
         }.recover(EmptyResultDataAccessException::class.java) { null }.get()
@@ -54,7 +54,7 @@ internal class JdbcProjectRepository(private val jdbcTemplate: JdbcTemplate) : P
     override fun createInbox(): Inbox {
         Inbox().let {
             add(it)
-            jdbcTemplate.update("insert into inboxes (projectId) values (?);", it.id.uuid.toString())
+            jdbcTemplate.update("insert into inboxes (project_id) values (?);", it.id.uuid.toString())
             return it
         }
     }

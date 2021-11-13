@@ -5,31 +5,34 @@ package dev.bettercode.tasks.infra.adapter.db.inmemory
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskDto
 import dev.bettercode.tasks.domain.tasks.Task
+import dev.bettercode.tasks.infra.adapter.db.TaskEntity
+import dev.bettercode.tasks.infra.adapter.db.TaskEntityMapper
 import dev.bettercode.tasks.infra.adapter.db.TasksQueryRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
+import java.util.*
 import kotlin.math.min
 
 
 internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTasksRepository) :
     TasksQueryRepository {
-
+    private val mapper: TaskEntityMapper = TaskEntityMapper()
     private fun getAllForProject(projectId: ProjectId): List<Task> {
         return inMemoryTasksDb.getAll().filter {
             it.projectId?.equals(projectId) == true
         }
     }
 
-    override fun findAllByProjectId(pageable: Pageable, projectId: ProjectId): Page<TaskDto> {
-        return listToPage(getAllForProject(projectId).map { TaskDto.from(it)!! }, pageable)
+    override fun findAllByProjectId(pageable: Pageable, uuid: UUID): Page<TaskEntity> {
+        return listToPage(getAllForProject(ProjectId(uuid)).map { mapper.toEntity(it) }, pageable)
     }
 
-    override fun findAllOpenForProject(pageRequest: Pageable, projectId: ProjectId): Page<TaskDto> {
+    override fun findAllOpenForProject(pageRequest: Pageable, uuid: UUID): Page<TaskEntity> {
         return listToPage(
-            getAllForProject(projectId).filter {
+            getAllForProject(ProjectId(uuid)).filter {
                 !it.isCompleted()
-            }.map { TaskDto.from(it)!! },
+            }.map { mapper.toEntity(it) },
             pageRequest
         )
     }
@@ -75,11 +78,11 @@ internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTask
 //        )
 //    }
 //
-    override fun findAllCompleted(pageRequest: Pageable): Page<TaskDto> {
+    override fun findAllCompleted(pageRequest: Pageable): Page<TaskEntity> {
         return listToPage(
             inMemoryTasksDb.getAll()
                 .filter { it.isCompleted() }
-                .map { TaskDto.from(it)!! }, pageRequest
+                .map { mapper.toEntity(it) }, pageRequest
         )
     }
 

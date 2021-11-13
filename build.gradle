@@ -21,6 +21,10 @@ java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
 	implementation(project(":tasks"))
+	implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
+	implementation platform('org.testcontainers:testcontainers-bom:1.16.2')
+
+	testCompile("io.rest-assured:spring-mock-mvc-kotlin-extensions:4.2.0")
 
 	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 }

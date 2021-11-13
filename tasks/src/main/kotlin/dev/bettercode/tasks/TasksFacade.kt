@@ -31,7 +31,7 @@ class TasksFacade internal constructor(
         return taskService.delete(id)
     }
 
-    private fun complete(id: TaskId, clock: Clock) {
+    fun complete(id: TaskId, clock: Clock = Clock.systemDefaultZone()) {
         taskCompletionService.complete(id, clock)
     }
 
@@ -55,7 +55,7 @@ class TasksFacade internal constructor(
         this.reopenTask(task.id, clock)
     }
 
-    private fun reopenTask(id: TaskId, clock: Clock) {
+    fun reopenTask(id: TaskId, clock: Clock = Clock.systemDefaultZone()) {
         taskCompletionService.reopen(id, clock)
     }
 
