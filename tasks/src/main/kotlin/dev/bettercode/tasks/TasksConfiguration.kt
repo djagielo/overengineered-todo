@@ -10,8 +10,6 @@ import dev.bettercode.tasks.application.tasks.TaskService
 import dev.bettercode.tasks.domain.projects.ProjectRepository
 import dev.bettercode.tasks.domain.tasks.TasksRepository
 import dev.bettercode.tasks.infra.adapter.db.*
-import dev.bettercode.tasks.infra.adapter.db.JdbcProjectRepository
-import dev.bettercode.tasks.infra.adapter.db.JdbcTasksRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryProjectsQueryRepository
 import dev.bettercode.tasks.infra.adapter.db.inmemory.InMemoryQueryRepository
@@ -28,7 +26,6 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.jdbc.core.JdbcTemplate
-import java.time.Clock
 
 @Configuration
 @EnableJpaRepositories("dev.bettercode.tasks.infra.adapter.db")
@@ -41,7 +38,7 @@ class TasksConfiguration {
             val projectRepo = InMemoryProjectRepository()
             val tasksQueryRepository = InMemoryQueryRepository(taskRepo)
             val projectsQueryRepository = InMemoryProjectsQueryRepository(projectRepo)
-            val projectService = ProjectService(projectRepo)
+            val projectService = ProjectService(projectRepo, inMemoryEventPublisher)
             val projectsQueryService = ProjectsQueryService(projectsQueryRepository)
             return TasksFacade(
                 TaskService(taskRepo, projectRepo, projectService, inMemoryEventPublisher),
@@ -99,9 +96,10 @@ class TasksConfiguration {
     @Bean
     internal fun projectsCrudService(
         tasksRepository: TasksRepository,
-        projectRepository: ProjectRepository
+        projectRepository: ProjectRepository,
+        eventPublisher: DomainEventPublisher
     ): ProjectService {
-        return ProjectService(projectRepository)
+        return ProjectService(projectRepository, eventPublisher)
     }
 
     @Bean

@@ -8,6 +8,7 @@ import dev.bettercode.tasks.domain.tasks.TasksRepository
 import dev.bettercode.tasks.infra.adapter.db.TasksQueryRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 
 internal class TasksQueryService(
     private val tasksQueryRepository: TasksQueryRepository,
@@ -20,7 +21,13 @@ internal class TasksQueryService(
         }
     }
 
-    fun findAllOpen(pageRequest: PageRequest, project: Project): Page<TaskDto> {
+    fun findAllOpen(pageable: Pageable): Page<TaskDto> {
+        return tasksQueryRepository.findAllOpen(pageable).map {
+            TaskDto.from(it)
+        }
+    }
+
+    fun findAllOpenForProject(pageRequest: PageRequest, project: Project): Page<TaskDto> {
         return tasksQueryRepository.findAllOpenForProject(pageRequest, project.id.uuid).map {
             TaskDto.from(it)
         }

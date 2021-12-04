@@ -2,6 +2,7 @@ package dev.bettercode.tasks.infra.adapter.db;
 
 import org.hibernate.annotations.Type
 import java.time.Instant
+import java.time.LocalDate
 import java.util.*
 import javax.persistence.Entity
 import javax.persistence.Id

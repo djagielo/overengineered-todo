@@ -3,7 +3,6 @@
 package dev.bettercode.tasks.infra.adapter.db.inmemory
 
 import dev.bettercode.tasks.ProjectId
-import dev.bettercode.tasks.TaskDto
 import dev.bettercode.tasks.domain.tasks.Task
 import dev.bettercode.tasks.infra.adapter.db.TaskEntity
 import dev.bettercode.tasks.infra.adapter.db.TaskEntityMapper
@@ -79,11 +78,19 @@ internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTask
 //    }
 //
     override fun findAllCompleted(pageRequest: Pageable): Page<TaskEntity> {
+        return findWithFilter(pageRequest) { it.isCompleted() }
+    }
+
+    private fun findWithFilter(pageRequest: Pageable, predicate: (Task) -> Boolean): Page<TaskEntity> {
         return listToPage(
             inMemoryTasksDb.getAll()
-                .filter { it.isCompleted() }
+                .filter(predicate)
                 .map { mapper.toEntity(it) }, pageRequest
         )
+    }
+
+    override fun findAllOpen(pageRequest: Pageable): Page<TaskEntity> {
+        return findWithFilter(pageRequest) { !it.isCompleted() }
     }
 
     private fun <T> listToPage(list: List<T>, pageable: Pageable): Page<T> {

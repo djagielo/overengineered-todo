@@ -18,6 +18,9 @@ interface TasksQueryRepository : Repository<TaskEntity, UUID> {
     @Query("select t from TaskEntity t where t.completionDate is not null")
     fun findAllCompleted(pageRequest: Pageable): Page<TaskEntity>
 
+    @Query("select t from TaskEntity t where t.completionDate is null")
+    fun findAllOpen(pageRequest: Pageable): Page<TaskEntity>
+
     //fun findAllCompletedForProject(pageRequest: PageRequest, projectId: ProjectId): Page<TaskDto>
     //fun findAllCompletedForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto>
     //fun findAllOpenForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto>

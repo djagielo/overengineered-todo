@@ -12,9 +12,11 @@ import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.DomainResult
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import java.time.Clock
+import java.time.LocalDate
 
-class TasksFacade internal constructor(
+open class TasksFacade internal constructor(
     private val taskService: TaskService,
     private val taskCompletionService: TaskCompletionService,
     private val projectService: ProjectService,
@@ -44,7 +46,7 @@ class TasksFacade internal constructor(
     }
 
     fun getOpenInboxTasks(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<TaskDto> {
-        return tasksQueryService.findAllOpen(pageRequest, projectService.getInboxProject())
+        return tasksQueryService.findAllOpenForProject(pageRequest, projectService.getInboxProject())
     }
 
     fun getAllCompleted(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<TaskDto> {
@@ -111,5 +113,17 @@ class TasksFacade internal constructor(
 
     fun completeProject(project: ProjectDto): DomainResult {
         return projectCompletionService.complete(project.id)
+    }
+
+    fun getAllWithoutDueDate(): Page<TaskDto> {
+        return Page.empty()
+    }
+
+    fun getTasksDueDate(dueDate: LocalDate?): Page<TaskDto> {
+        return Page.empty()
+    }
+
+    open fun getAllOpen(pageable: Pageable): Page<TaskDto> {
+        return tasksQueryService.findAllOpen(pageable)
     }
 }
