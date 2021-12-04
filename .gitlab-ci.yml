@@ -30,6 +30,9 @@ docker-build-job:
     - source .${CI_COMMIT_REF_NAME}.env
   image: docker:stable
   stage: build and push docker image
+  only:
+    - development
+    - master
   script:
     - docker build -t $DOCKER_REPO .
     - echo "$DOCKER_PASSWORD" | docker login --username djagielo --password-stdin docker.io
