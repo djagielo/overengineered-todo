@@ -27,7 +27,7 @@ internal class TasksUseCases {
 
         // then - should get the task by id
         assertThat(tasksFacade.get(task.id)).isEqualTo(task)
-        assertThat(eventPublisher.events).containsExactlyInAnyOrder(TaskCreated(task.id))
+        assertThat(eventPublisher.events).contains(TaskCreated(task.id))
     }
 
     @Test
@@ -41,7 +41,7 @@ internal class TasksUseCases {
         // then - should be able to retrieve them
         assertThat(tasksFacade.getOpenInboxTasks())
             .containsExactlyInAnyOrder(*tasks.toTypedArray())
-        assertThat(eventPublisher.events).containsExactlyInAnyOrder(*tasks.map { TaskCreated(it.id) }.toTypedArray())
+        assertThat(eventPublisher.events).contains(*tasks.map { TaskCreated(it.id) }.toTypedArray())
     }
 
     @Test
@@ -144,8 +144,8 @@ internal class TasksUseCases {
         tasksDueTomorrow.forEach { tasksFacade.add(it) }
 
         // when
-        val resultDueToday = tasksFacade.getTasksDueDate(LocalDate.now())
-        val resultDuetTomorrow = tasksFacade.getTasksDueDate(LocalDate.now().plus(1, ChronoUnit.DAYS))
+        val resultDueToday = tasksFacade.getTasksDueDate(dueDate = LocalDate.now())
+        val resultDuetTomorrow = tasksFacade.getTasksDueDate(dueDate = LocalDate.now().plus(1, ChronoUnit.DAYS))
 
         // then
         assertThat(resultDueToday.map { it.id })
@@ -158,14 +158,15 @@ internal class TasksUseCases {
     @Test
     fun `should be able to find all tasks without due date`() {
         // given - 7 saved tasks
-        val tasks = TasksFixtures.aNoOfTasks(7)
-        tasks.forEach { tasksFacade.add(it) }
+        val tasksWithoutDueDate = TasksFixtures.aNoOfTasks(7)
+        val taskWithDueDate = TasksFixtures.aNoOfTasks(3, dueDate = LocalDate.now())
+        (tasksWithoutDueDate + taskWithDueDate).forEach { tasksFacade.add(it) }
 
         // when - searching for no-due date tasks
         val result = tasksFacade.getAllWithoutDueDate()
 
         // then
-        assertThat(result.map { it.id })
-            .containsExactlyInAnyOrder(*tasks.map { it.id }.toTypedArray())
+        assertThat(result.map { it.id }.toList())
+            .containsExactlyInAnyOrder(*tasksWithoutDueDate.map { it.id }.toTypedArray())
     }
 }

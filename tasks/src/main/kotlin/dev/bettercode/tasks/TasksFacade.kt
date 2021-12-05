@@ -26,7 +26,14 @@ open class TasksFacade internal constructor(
     private val projectsQueryService: ProjectsQueryService
 ) {
     fun add(task: TaskDto): DomainResult {
-        return taskService.add(Task(id = task.id, name = task.name))
+        val taskToAdd = Task(id = task.id, name = task.name)
+        if (task.dueDate != null) {
+            taskToAdd.dueTo(task.dueDate).apply {
+                if (this.failure)
+                    return this
+            }
+        }
+        return taskService.add(taskToAdd)
     }
 
     fun delete(id: TaskId) {
@@ -115,12 +122,12 @@ open class TasksFacade internal constructor(
         return projectCompletionService.complete(project.id)
     }
 
-    fun getAllWithoutDueDate(): Page<TaskDto> {
-        return Page.empty()
+    fun getAllWithoutDueDate(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<TaskDto> {
+        return tasksQueryService.findAllWithoutDueDate(pageRequest);
     }
 
-    fun getTasksDueDate(dueDate: LocalDate?): Page<TaskDto> {
-        return Page.empty()
+    fun getTasksDueDate(pageable: Pageable = PageRequest.of(0, 100), dueDate: LocalDate): Page<TaskDto> {
+        return tasksQueryService.findAllWithDueDate(pageable, dueDate)
     }
 
     open fun getAllOpen(pageable: Pageable): Page<TaskDto> {

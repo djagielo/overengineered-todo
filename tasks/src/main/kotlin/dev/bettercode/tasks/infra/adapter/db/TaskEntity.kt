@@ -17,5 +17,6 @@ class TaskEntity(
     val name: String? = null,
     @Type(type = "uuid-char")
     val projectId: UUID? = null,
-    val completionDate: Instant? = null
+    val completionDate: Instant? = null,
+    val dueDate: LocalDate? = null
 )

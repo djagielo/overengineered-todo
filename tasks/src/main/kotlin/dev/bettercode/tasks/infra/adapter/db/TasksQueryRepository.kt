@@ -5,6 +5,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.Repository
 import org.springframework.data.repository.query.Param
+import java.time.LocalDate
 import java.util.*
 
 @org.springframework.stereotype.Repository
@@ -21,8 +22,9 @@ interface TasksQueryRepository : Repository<TaskEntity, UUID> {
     @Query("select t from TaskEntity t where t.completionDate is null")
     fun findAllOpen(pageRequest: Pageable): Page<TaskEntity>
 
-    //fun findAllCompletedForProject(pageRequest: PageRequest, projectId: ProjectId): Page<TaskDto>
-    //fun findAllCompletedForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto>
-    //fun findAllOpenForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto>
-    //fun findAllForDate(pageRequest: PageRequest, date: LocalDate): Page<TaskDto>
+    @Query("select t from TaskEntity t where t.dueDate is null")
+    fun findAllNoDueDate(pageRequest: Pageable): Page<TaskEntity>
+
+    @Query("select t from TaskEntity t where t.dueDate= :dueDate")
+    fun findAllWithDueDate(pageable: Pageable, @Param("dueDate") dueDate: LocalDate): Page<TaskEntity>
 }
