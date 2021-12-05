@@ -1,14 +1,13 @@
 package dev.bettercode.tasks.domain.projects
 
-import dev.bettercode.bettercode.tasks.TasksFixtures
 import org.apache.commons.lang3.RandomStringUtils
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.Test
 import org.junit.jupiter.params.ParameterizedTest
 import org.junit.jupiter.params.provider.Arguments
 import org.junit.jupiter.params.provider.MethodSource
-import java.time.*
-import java.time.temporal.ChronoUnit
+import java.time.Instant
+import java.time.LocalDateTime
+import java.time.ZoneId
 import java.util.stream.Stream
 
 
@@ -82,26 +81,4 @@ internal class ProjectTest {
         assertThat(result.successful).isFalse
         assertThat(result.reason).isEqualTo("Project can be reopened within the same day as completed")
     }
-//
-//    @Test
-//    fun `should be able to find tasks by due date for a project`() {
-//        // given - 3 tasks due today
-//        val tasksDueToday = TasksFixtures.aNoOfTasks(3, dueDate = LocalDate.now())
-//        tasksDueToday.forEach { tasksFacade.add(it) }
-//
-//        // and - 3 tasks due tomorrow
-//        val tasksDueTomorrow = TasksFixtures.aNoOfTasks(3, dueDate = LocalDate.now().plus(1, ChronoUnit.DAYS))
-//        tasksDueTomorrow.forEach { tasksFacade.add(it) }
-//
-//        // when
-//        val resultDueToday = tasksFacade.getTasksDueDate(LocalDate.now())
-//        val resultDuetTomorrow = tasksFacade.getTasksDueDate(LocalDate.now().plus(1, ChronoUnit.DAYS))
-//
-//        // then
-//        assertThat(resultDueToday.map { it.id })
-//            .containsExactlyInAnyOrder(*tasksDueToday.map { it.id }.toTypedArray())
-//
-//        assertThat(resultDuetTomorrow.map { it.id })
-//            .containsExactlyInAnyOrder(*tasksDueTomorrow.map { it.id }.toTypedArray())
-//    }
 }

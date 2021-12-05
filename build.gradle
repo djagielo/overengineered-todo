@@ -46,36 +46,3 @@ allprojects {
 		useJUnitPlatform()
 	}
 }
-
-
-//
-//allprojects {
-//	group = "dev.bettercode"
-//	version = "0.0.1-SNAPSHOT"
-//
-//	tasks.withType<Test> {
-//		useJUnitPlatform()
-//	}
-//
-//	tasks.withType<KotlinCompile> {
-//		kotlinOptions {
-//			freeCompilerArgs = listOf("-Xjsr305=strict")
-//			jvmTarget = "11"
-//		}
-//	}
-//}
-//
-//dependencies {
-//	implementation(project(":tasks"))
-//}
-//
-//repositories {
-//	mavenCentral()
-//}
-//
-
-//
-//	apply {
-//		plugin("io.spring.dependency-management")
-//	}
-//}
