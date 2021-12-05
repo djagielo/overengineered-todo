@@ -15,7 +15,7 @@ class DefaultDynamicProjectsService(private val dynamicProjectRepository: Dynami
                 ) ?: false
             }))
 
-            listOf("Completed today", "Overdue", "Today", "Completed last week").forEach {
+            listOf("Completed today", "Today", "Completed last week").forEach {
                 dynamicProjectRepository.saveProject(DynamicProject(name = it, predicate = { true }))
             }
         }
