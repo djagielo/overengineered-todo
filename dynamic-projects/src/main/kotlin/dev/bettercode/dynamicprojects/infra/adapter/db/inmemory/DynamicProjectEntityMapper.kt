@@ -10,7 +10,7 @@ class DynamicProjectEntityMapper {
         return DynamicProjectEntity(
             id = project.id.uuid,
             name = project.name,
-            tasks = project.tasks.map { it.uuid }.toSet()
+            tasks = project.tasks.map { it.uuid }.toSet(),
         )
     }
 
@@ -18,8 +18,7 @@ class DynamicProjectEntityMapper {
         return DynamicProject(
             id = DynamicProjectId(entity.id),
             name = entity.name ?: "",
-            tasks = entity.tasks.map { TaskId(it) }.toMutableSet(),
-            predicate = { true }
+            tasks = entity.tasks.map { TaskId(it) }.toMutableSet()
         )
     }
 }

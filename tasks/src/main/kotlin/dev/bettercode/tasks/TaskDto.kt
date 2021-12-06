@@ -12,15 +12,34 @@ data class TaskDto(
     val dueDate: LocalDate? = null
 ) {
 
-    constructor(name: String, completionDate: Instant? = null, dueDate: LocalDate? = null) : this(TaskId(), name, completionDate, dueDate)
+    constructor(name: String, completionDate: Instant? = null, dueDate: LocalDate? = null) : this(
+        TaskId(),
+        name,
+        completionDate,
+        dueDate
+    )
 
     companion object {
         internal fun from(task: Task?): TaskDto? {
-            return task?.let { t -> TaskDto(t.id, t.name, t.completionDate) }
+            return task?.let { t ->
+                TaskDto(
+                    id = t.id,
+                    name = t.name,
+                    completionDate = t.completionDate,
+                    dueDate = t.dueDate
+                )
+            }
         }
 
         fun from(task: TaskEntity?): TaskDto? {
-            return task?.let { t -> TaskDto(TaskId(t.id), t.name!!, t.completionDate) }
+            return task?.let { t ->
+                TaskDto(
+                    id = TaskId(t.id),
+                    name = t.name!!,
+                    completionDate = t.completionDate,
+                    dueDate = task.dueDate
+                )
+            }
         }
     }
 }

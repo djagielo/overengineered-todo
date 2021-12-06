@@ -11,6 +11,6 @@ class DynamicProjectEntity(
     @Type(type = "uuid-char")
     val id: UUID = UUID.randomUUID(),
     val name: String? = null,
-    @ElementCollection( fetch = FetchType.EAGER)
+    @ElementCollection(fetch = FetchType.EAGER)
     val tasks: Set<UUID> = emptySet()
 )
