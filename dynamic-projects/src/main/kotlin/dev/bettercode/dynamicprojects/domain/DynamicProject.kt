@@ -5,7 +5,7 @@ import dev.bettercode.tasks.TaskId
 
 class DynamicProject(
     val id: DynamicProjectId = DynamicProjectId(),
-    val tasks: MutableSet<TaskId> = mutableSetOf(),
+    val tasks: MutableSet<TaskId> =  mutableSetOf(),
     val name: String,
     val default: Boolean = false
 ) {
@@ -15,5 +15,9 @@ class DynamicProject(
 
     fun tasks(): Set<TaskId> {
         return this.tasks
+    }
+
+    fun clearTasks() {
+        this.tasks.clear()
     }
 }

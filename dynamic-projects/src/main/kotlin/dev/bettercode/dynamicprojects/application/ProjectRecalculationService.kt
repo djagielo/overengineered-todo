@@ -4,6 +4,7 @@ import dev.bettercode.dynamicprojects.DynamicProjectId
 import dev.bettercode.dynamicprojects.domain.DynamicProjectRepository
 import dev.bettercode.tasks.TaskDto
 import org.springframework.data.domain.PageRequest
+
 import org.springframework.data.domain.Pageable
 import java.time.LocalDate
 import java.util.function.Predicate
@@ -34,6 +35,7 @@ internal class ProjectRecalculationService(
 
             var page: Pageable = PageRequest.of(0, 100)
             var tasks = tasksQuery.getAllOpen(page)
+            project.clearTasks()
             while (!tasks.isEmpty) {
                 project.addTasks(tasks.filter(predicatesMap[project.name]!!).map { it.id }
                     .toSet())
@@ -41,7 +43,7 @@ internal class ProjectRecalculationService(
                 tasks = tasksQuery.getAllOpen(page)
             }
 
-            dynamicProjectRepository.saveProject(project!!)
+            dynamicProjectRepository.saveProject(project)
         }
 
     }
