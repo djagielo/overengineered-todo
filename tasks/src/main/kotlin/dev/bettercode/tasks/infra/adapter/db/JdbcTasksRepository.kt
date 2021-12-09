@@ -15,12 +15,13 @@ internal class JdbcTasksRepository(private val jdbcTemplate: JdbcTemplate) : Tas
     override fun add(task: Task): Task {
         val snapshot = task.toSnapshot()
         jdbcTemplate.update(
-            "INSERT INTO tasks (id, name, status, completion_date, project_id) values (?,?,?,?,?)",
+            "INSERT INTO tasks (id, name, status, completion_date, project_id, due_date) values (?,?,?,?,?,?)",
             snapshot.id.toString(),
             snapshot.name,
             snapshot.status.toString(),
             snapshot.completionDate,
-            snapshot.projectId.toString()
+            snapshot.projectId.toString(),
+            snapshot.dueDate
         )
         return task
     }
@@ -28,7 +29,7 @@ internal class JdbcTasksRepository(private val jdbcTemplate: JdbcTemplate) : Tas
     override fun get(id: TaskId): Task? {
         val taskSnapshot = Try.of {
             jdbcTemplate.queryForObject(
-                "select id, name, status, completion_date, project_id from tasks where id=?",
+                "select id, name, status, completion_date, project_id, due_date from tasks where id=?",
                 mapRowToTask(),
                 id.uuid.toString()
             )
@@ -43,18 +44,20 @@ internal class JdbcTasksRepository(private val jdbcTemplate: JdbcTemplate) : Tas
             name = rs.getString("name"),
             status = TaskStatus.valueOf(rs.getString("status")),
             completionDate = rs.getTimestamp("completion_date")?.toInstant(),
-            projectId = UUID.fromString(rs.getString("project_id"))
+            projectId = UUID.fromString(rs.getString("project_id")),
+            dueDate = rs.getDate("due_date").toLocalDate()
         )
     }
 
     override fun save(task: Task): Task {
         val snapshot = task.toSnapshot()
         jdbcTemplate.update(
-            "UPDATE tasks SET name=?, status=?, completion_date=?, project_id = ? where id=?",
+            "UPDATE tasks SET name=?, status=?, completion_date=?, project_id = ?, due_date=? where id=?",
             snapshot.name,
             snapshot.status.toString(),
             snapshot.completionDate,
             snapshot.projectId.toString(),
+            snapshot.dueDate,
             snapshot.id.toString()
         )
 

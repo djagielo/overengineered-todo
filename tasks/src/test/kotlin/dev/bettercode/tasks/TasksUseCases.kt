@@ -8,6 +8,7 @@ import org.assertj.core.api.Assertions.within
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Instant
+import java.time.LocalDate
 import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
@@ -26,7 +27,7 @@ internal class TasksUseCases {
 
         // then - should get the task by id
         assertThat(tasksFacade.get(task.id)).isEqualTo(task)
-        assertThat(eventPublisher.events).containsExactlyInAnyOrder(TaskCreated(task.id))
+        assertThat(eventPublisher.events).contains(TaskCreated(task.id))
     }
 
     @Test
@@ -40,7 +41,7 @@ internal class TasksUseCases {
         // then - should be able to retrieve them
         assertThat(tasksFacade.getOpenInboxTasks())
             .containsExactlyInAnyOrder(*tasks.toTypedArray())
-        assertThat(eventPublisher.events).containsExactlyInAnyOrder(*tasks.map { TaskCreated(it.id) }.toTypedArray())
+        assertThat(eventPublisher.events).contains(*tasks.map { TaskCreated(it.id) }.toTypedArray())
     }
 
     @Test
@@ -131,5 +132,41 @@ internal class TasksUseCases {
 
         // then
         assertThat(task).isNull()
+    }
+
+    @Test
+    fun `should be able to find tasks by due date`() {
+        // given - 1 task due today
+        val tasksDueToday = TasksFixtures.aNoOfTasks(1, dueDate = LocalDate.now())
+        tasksDueToday.forEach { tasksFacade.add(it) }
+        // and - 2 tasks due tomorrow
+        val tasksDueTomorrow = TasksFixtures.aNoOfTasks(2, dueDate = LocalDate.now().plus(1, ChronoUnit.DAYS))
+        tasksDueTomorrow.forEach { tasksFacade.add(it) }
+
+        // when
+        val resultDueToday = tasksFacade.getTasksDueDate(dueDate = LocalDate.now())
+        val resultDuetTomorrow = tasksFacade.getTasksDueDate(dueDate = LocalDate.now().plus(1, ChronoUnit.DAYS))
+
+        // then
+        assertThat(resultDueToday.map { it.id })
+            .containsExactlyInAnyOrder(*tasksDueToday.map { it.id }.toTypedArray())
+
+        assertThat(resultDuetTomorrow.map { it.id })
+            .containsExactlyInAnyOrder(*tasksDueTomorrow.map { it.id }.toTypedArray())
+    }
+
+    @Test
+    fun `should be able to find all tasks without due date`() {
+        // given - 7 saved tasks
+        val tasksWithoutDueDate = TasksFixtures.aNoOfTasks(7)
+        val taskWithDueDate = TasksFixtures.aNoOfTasks(3, dueDate = LocalDate.now())
+        (tasksWithoutDueDate + taskWithDueDate).forEach { tasksFacade.add(it) }
+
+        // when - searching for no-due date tasks
+        val result = tasksFacade.getAllWithoutDueDate()
+
+        // then
+        assertThat(result.map { it.id }.toList())
+            .containsExactlyInAnyOrder(*tasksWithoutDueDate.map { it.id }.toTypedArray())
     }
 }

@@ -21,3 +21,8 @@ CREATE TABLE IF NOT EXISTS tasks (
 
     CONSTRAINT fk_projects FOREIGN KEY (project_id) REFERENCES projects(id)
 );
+
+CREATE TABLE IF NOT EXISTS dynamic_projects (
+    id VARCHAR(50) NOT NULL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL
+);

@@ -2,6 +2,7 @@ package dev.bettercode.tasks.infra.adapter.db;
 
 import org.hibernate.annotations.Type
 import java.time.Instant
+import java.time.LocalDate
 import java.util.*
 import javax.persistence.Entity
 import javax.persistence.Id
@@ -16,5 +17,6 @@ class TaskEntity(
     val name: String? = null,
     @Type(type = "uuid-char")
     val projectId: UUID? = null,
-    val completionDate: Instant? = null
+    val completionDate: Instant? = null,
+    val dueDate: LocalDate? = null
 )

@@ -12,9 +12,11 @@ import dev.bettercode.tasks.query.TasksQueryService
 import dev.bettercode.tasks.shared.DomainResult
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import java.time.Clock
+import java.time.LocalDate
 
-class TasksFacade internal constructor(
+open class TasksFacade internal constructor(
     private val taskService: TaskService,
     private val taskCompletionService: TaskCompletionService,
     private val projectService: ProjectService,
@@ -24,7 +26,14 @@ class TasksFacade internal constructor(
     private val projectsQueryService: ProjectsQueryService
 ) {
     fun add(task: TaskDto): DomainResult {
-        return taskService.add(Task(id = task.id, name = task.name))
+        val taskToAdd = Task(id = task.id, name = task.name)
+        if (task.dueDate != null) {
+            taskToAdd.dueTo(task.dueDate).apply {
+                if (this.failure)
+                    return this
+            }
+        }
+        return taskService.add(taskToAdd)
     }
 
     fun delete(id: TaskId) {
@@ -43,12 +52,12 @@ class TasksFacade internal constructor(
         return tasksQueryService.findById(id)
     }
 
-    fun getOpenInboxTasks(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<TaskDto> {
-        return tasksQueryService.findAllOpen(pageRequest, projectService.getInboxProject())
+    fun getOpenInboxTasks(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
+        return tasksQueryService.findAllOpenForProject(pageable, projectService.getInboxProject())
     }
 
-    fun getAllCompleted(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<TaskDto> {
-        return tasksQueryService.findAllCompleted(pageRequest)
+    fun getAllCompleted(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
+        return tasksQueryService.findAllCompleted(pageable)
     }
 
     fun reopenTask(task: TaskDto, clock: Clock = Clock.systemDefaultZone()) {
@@ -87,13 +96,13 @@ class TasksFacade internal constructor(
         return projectAssignmentService.assign(task.id, projectId)
     }
 
-    fun getTasksForProject(pageRequest: PageRequest = PageRequest.of(0, 100), project: ProjectDto): Page<TaskDto> {
-        return getTasksForProject(pageRequest, project.id)
+    fun getTasksForProject(pageable: Pageable = PageRequest.of(0, 100), project: ProjectDto): Page<TaskDto> {
+        return getTasksForProject(pageable, project.id)
     }
 
-    fun getTasksForProject(pageRequest: PageRequest = PageRequest.of(0, 100), projectId: ProjectId): Page<TaskDto> {
+    fun getTasksForProject(pageable: Pageable = PageRequest.of(0, 100), projectId: ProjectId): Page<TaskDto> {
         return projectsQueryService.findById(projectId)?.let {
-            return tasksQueryService.findAllForProject(pageRequest, projectId)
+            return tasksQueryService.findAllForProject(pageable, projectId)
         } ?: Page.empty()
     }
 
@@ -111,5 +120,17 @@ class TasksFacade internal constructor(
 
     fun completeProject(project: ProjectDto): DomainResult {
         return projectCompletionService.complete(project.id)
+    }
+
+    fun getAllWithoutDueDate(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
+        return tasksQueryService.findAllWithoutDueDate(pageable);
+    }
+
+    fun getTasksDueDate(pageable: Pageable = PageRequest.of(0, 100), dueDate: LocalDate): Page<TaskDto> {
+        return tasksQueryService.findAllWithDueDate(pageable, dueDate)
+    }
+
+    open fun getAllOpen(pageable: Pageable): Page<TaskDto> {
+        return tasksQueryService.findAllOpen(pageable)
     }
 }

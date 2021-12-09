@@ -12,8 +12,11 @@ compile-test-job:
   script:
     - gradle clean test
   artifacts:
+    when: always
     paths:
       - build
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
 
 build-jar-job:
   image: gradle:6.8.3-jdk15
@@ -30,6 +33,9 @@ docker-build-job:
     - source .${CI_COMMIT_REF_NAME}.env
   image: docker:stable
   stage: build and push docker image
+  only:
+    - development
+    - master
   script:
     - docker build -t $DOCKER_REPO .
     - echo "$DOCKER_PASSWORD" | docker login --username djagielo --password-stdin docker.io

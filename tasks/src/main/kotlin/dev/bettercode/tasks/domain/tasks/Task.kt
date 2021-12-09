@@ -2,7 +2,6 @@ package dev.bettercode.tasks.domain.tasks
 
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
-import dev.bettercode.tasks.application.projects.TaskAssignedToProject
 import dev.bettercode.tasks.domain.projects.Project
 import dev.bettercode.tasks.shared.DomainResult
 import java.time.Instant
@@ -10,6 +9,8 @@ import java.time.LocalDate
 import java.time.ZoneId
 
 internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: ProjectId? = null) {
+    var dueDate: LocalDate? = null
+        private set
     internal var completionDate: Instant? = null
     private var status = TaskStatus.NEW
 
@@ -20,6 +21,17 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
     fun complete(instant: Instant = Instant.now()) {
         status = TaskStatus.COMPLETED
         completionDate = instant
+    }
+
+    fun dueTo(newDueTo: LocalDate): DomainResult {
+        if (status == TaskStatus.COMPLETED) {
+            return DomainResult.failure("Cannot change dueDate of completed task")
+        } else if (newDueTo.isBefore(LocalDate.now())) {
+            return DomainResult.failure("Cannot set past dueDate")
+        }
+
+        this.dueDate = newDueTo
+        return DomainResult.success()
     }
 
     fun isCompleted(): Boolean {
@@ -63,7 +75,8 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
             name = name,
             completionDate = completionDate,
             status = status,
-            projectId = projectId?.uuid
+            projectId = projectId?.uuid,
+            dueDate = dueDate
         )
     }
 
@@ -73,6 +86,7 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
             val task = Task(taskSnapshot.name, TaskId(taskSnapshot.id), projectId)
             task.completionDate = taskSnapshot.completionDate
             task.status = taskSnapshot.status
+            taskSnapshot.dueDate?.let(task::dueTo)
             return task
         }
     }

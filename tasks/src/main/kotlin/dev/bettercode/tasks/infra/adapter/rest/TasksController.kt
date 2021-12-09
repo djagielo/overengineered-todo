@@ -28,11 +28,11 @@ class TasksController(val tasksFacade: TasksFacade) {
     internal fun create(@RequestBody taskRequest: TaskRequest): ResponseEntity<TaskDto> {
         val taskDto = taskRequest.toTaskDto()
         val result = tasksFacade.add(taskDto)
-        if (result.successful) {
-            return ResponseEntity.created(URI.create("tasks/${taskDto.id.uuid}"))
+        return if (result.successful) {
+            ResponseEntity.created(URI.create("tasks/${taskDto.id.uuid}"))
                 .body(taskDto)
         } else {
-            return ResponseEntity.badRequest().build();
+            ResponseEntity.badRequest().build();
         }
     }
 
