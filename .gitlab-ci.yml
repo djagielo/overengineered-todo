@@ -12,8 +12,11 @@ compile-test-job:
   script:
     - gradle clean test
   artifacts:
+    when: always
     paths:
       - build
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
 
 build-jar-job:
   image: gradle:6.8.3-jdk15
