@@ -2,7 +2,7 @@ package dev.bettercode.dynamicprojects.infra.adapter.db.inmemory
 
 import dev.bettercode.dynamicprojects.DynamicProjectId
 import dev.bettercode.dynamicprojects.domain.DynamicProject
-import dev.bettercode.dynamicprojects.query.DynamicProjectEntity
+import dev.bettercode.dynamicprojects.query.db.DynamicProjectEntity
 import dev.bettercode.tasks.TaskId
 
 class DynamicProjectEntityMapper {

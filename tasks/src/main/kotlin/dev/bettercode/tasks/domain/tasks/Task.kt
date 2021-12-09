@@ -75,7 +75,8 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
             name = name,
             completionDate = completionDate,
             status = status,
-            projectId = projectId?.uuid
+            projectId = projectId?.uuid,
+            dueDate = dueDate
         )
     }
 
@@ -85,6 +86,7 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
             val task = Task(taskSnapshot.name, TaskId(taskSnapshot.id), projectId)
             task.completionDate = taskSnapshot.completionDate
             task.status = taskSnapshot.status
+            taskSnapshot.dueDate?.let(task::dueTo)
             return task
         }
     }

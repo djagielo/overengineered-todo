@@ -1,6 +1,6 @@
 package dev.bettercode.dynamicprojects
 
-import dev.bettercode.dynamicprojects.query.DynamicProjectEntity
+import dev.bettercode.dynamicprojects.query.db.DynamicProjectEntity
 import dev.bettercode.tasks.TaskId
 
 data class DynamicProjectDto(

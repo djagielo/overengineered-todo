@@ -28,12 +28,12 @@ internal class InMemoryQueryRepository(private val inMemoryTasksDb: InMemoryTask
         return listToPage(getAllForProject(ProjectId(uuid)).map { mapper.toEntity(it) }, pageable)
     }
 
-    override fun findAllOpenForProject(pageRequest: Pageable, uuid: UUID): Page<TaskEntity> {
+    override fun findAllOpenForProject(pageable: Pageable, uuid: UUID): Page<TaskEntity> {
         return listToPage(
             getAllForProject(ProjectId(uuid)).filter {
                 !it.isCompleted()
             }.map { mapper.toEntity(it) },
-            pageRequest
+            pageable
         )
     }
 

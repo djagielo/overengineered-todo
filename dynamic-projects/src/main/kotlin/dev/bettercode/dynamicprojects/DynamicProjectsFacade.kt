@@ -1,14 +1,15 @@
 package dev.bettercode.dynamicprojects
 
-import dev.bettercode.dynamicprojects.query.DynamicProjectQueryService
+import dev.bettercode.dynamicprojects.query.service.DynamicProjectQueryService
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 
 class DynamicProjectsFacade internal constructor(
     private val dynamicProjectQueryService: DynamicProjectQueryService
 ) {
-    fun getProjects(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<DynamicProjectDto> {
-        return this.dynamicProjectQueryService.getAll(pageRequest)
+    fun getProjects(pageable: Pageable = PageRequest.of(0, 100)): Page<DynamicProjectDto> {
+        return this.dynamicProjectQueryService.getAll(pageable)
     }
 
     fun getProjectByName(name: String): DynamicProjectDto? {

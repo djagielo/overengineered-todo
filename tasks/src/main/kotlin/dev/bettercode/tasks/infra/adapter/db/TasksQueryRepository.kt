@@ -14,16 +14,16 @@ interface TasksQueryRepository : Repository<TaskEntity, UUID> {
     fun findAllByProjectId(pageable: Pageable, uuid: UUID): Page<TaskEntity>
 
     @Query("select t from TaskEntity t where t.projectId= :projectId ")
-    fun findAllOpenForProject(pageRequest: Pageable, @Param("projectId") uuid: UUID): Page<TaskEntity>
+    fun findAllOpenForProject(pageable: Pageable, @Param("projectId") uuid: UUID): Page<TaskEntity>
 
     @Query("select t from TaskEntity t where t.completionDate is not null")
-    fun findAllCompleted(pageRequest: Pageable): Page<TaskEntity>
+    fun findAllCompleted(pageable: Pageable): Page<TaskEntity>
 
     @Query("select t from TaskEntity t where t.completionDate is null")
-    fun findAllOpen(pageRequest: Pageable): Page<TaskEntity>
+    fun findAllOpen(pageable: Pageable): Page<TaskEntity>
 
     @Query("select t from TaskEntity t where t.dueDate is null")
-    fun findAllNoDueDate(pageRequest: Pageable): Page<TaskEntity>
+    fun findAllNoDueDate(pageable: Pageable): Page<TaskEntity>
 
     @Query("select t from TaskEntity t where t.dueDate= :dueDate")
     fun findAllWithDueDate(pageable: Pageable, @Param("dueDate") dueDate: LocalDate): Page<TaskEntity>

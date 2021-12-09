@@ -52,12 +52,12 @@ open class TasksFacade internal constructor(
         return tasksQueryService.findById(id)
     }
 
-    fun getOpenInboxTasks(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<TaskDto> {
-        return tasksQueryService.findAllOpenForProject(pageRequest, projectService.getInboxProject())
+    fun getOpenInboxTasks(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
+        return tasksQueryService.findAllOpenForProject(pageable, projectService.getInboxProject())
     }
 
-    fun getAllCompleted(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<TaskDto> {
-        return tasksQueryService.findAllCompleted(pageRequest)
+    fun getAllCompleted(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
+        return tasksQueryService.findAllCompleted(pageable)
     }
 
     fun reopenTask(task: TaskDto, clock: Clock = Clock.systemDefaultZone()) {
@@ -96,13 +96,13 @@ open class TasksFacade internal constructor(
         return projectAssignmentService.assign(task.id, projectId)
     }
 
-    fun getTasksForProject(pageRequest: PageRequest = PageRequest.of(0, 100), project: ProjectDto): Page<TaskDto> {
-        return getTasksForProject(pageRequest, project.id)
+    fun getTasksForProject(pageable: Pageable = PageRequest.of(0, 100), project: ProjectDto): Page<TaskDto> {
+        return getTasksForProject(pageable, project.id)
     }
 
-    fun getTasksForProject(pageRequest: PageRequest = PageRequest.of(0, 100), projectId: ProjectId): Page<TaskDto> {
+    fun getTasksForProject(pageable: Pageable = PageRequest.of(0, 100), projectId: ProjectId): Page<TaskDto> {
         return projectsQueryService.findById(projectId)?.let {
-            return tasksQueryService.findAllForProject(pageRequest, projectId)
+            return tasksQueryService.findAllForProject(pageable, projectId)
         } ?: Page.empty()
     }
 
@@ -122,8 +122,8 @@ open class TasksFacade internal constructor(
         return projectCompletionService.complete(project.id)
     }
 
-    fun getAllWithoutDueDate(pageRequest: PageRequest = PageRequest.of(0, 100)): Page<TaskDto> {
-        return tasksQueryService.findAllWithoutDueDate(pageRequest);
+    fun getAllWithoutDueDate(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
+        return tasksQueryService.findAllWithoutDueDate(pageable);
     }
 
     fun getTasksDueDate(pageable: Pageable = PageRequest.of(0, 100), dueDate: LocalDate): Page<TaskDto> {

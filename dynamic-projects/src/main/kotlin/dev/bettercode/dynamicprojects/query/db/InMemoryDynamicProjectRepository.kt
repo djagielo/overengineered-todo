@@ -1,4 +1,4 @@
-package dev.bettercode.dynamicprojects.query
+package dev.bettercode.dynamicprojects.query.db
 
 import dev.bettercode.dynamicprojects.DynamicProjectId
 import dev.bettercode.dynamicprojects.domain.DynamicProject

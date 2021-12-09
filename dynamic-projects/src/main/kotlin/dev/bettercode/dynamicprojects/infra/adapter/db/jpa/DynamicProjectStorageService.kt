@@ -1,4 +1,4 @@
-package dev.bettercode.dynamicprojects.infra.adapter;
+package dev.bettercode.dynamicprojects.infra.adapter.db.jpa;
 
 import dev.bettercode.dynamicprojects.DynamicProjectId
 import dev.bettercode.dynamicprojects.domain.DynamicProject

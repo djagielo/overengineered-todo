@@ -7,7 +7,6 @@ import dev.bettercode.tasks.domain.projects.Project
 import dev.bettercode.tasks.domain.tasks.TasksRepository
 import dev.bettercode.tasks.infra.adapter.db.TasksQueryRepository
 import org.springframework.data.domain.Page
-import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 import java.time.LocalDate
 
@@ -28,20 +27,20 @@ internal class TasksQueryService(
         }
     }
 
-    fun findAllOpenForProject(pageRequest: PageRequest, project: Project): Page<TaskDto> {
-        return tasksQueryRepository.findAllOpenForProject(pageRequest, project.id.uuid).map {
+    fun findAllOpenForProject(pageable: Pageable, project: Project): Page<TaskDto> {
+        return tasksQueryRepository.findAllOpenForProject(pageable, project.id.uuid).map {
             TaskDto.from(it)
         }
     }
 
-    fun findAllCompleted(pageRequest: PageRequest): Page<TaskDto> {
-        return tasksQueryRepository.findAllCompleted(pageRequest).map {
+    fun findAllCompleted(pageable: Pageable): Page<TaskDto> {
+        return tasksQueryRepository.findAllCompleted(pageable).map {
             TaskDto.from(it)
         }
     }
 
-    fun findAllForProject(pageRequest: PageRequest, projectId: ProjectId): Page<TaskDto> {
-        return this.tasksQueryRepository.findAllByProjectId(pageRequest, projectId.uuid).map {
+    fun findAllForProject(pageable: Pageable, projectId: ProjectId): Page<TaskDto> {
+        return this.tasksQueryRepository.findAllByProjectId(pageable, projectId.uuid).map {
             TaskDto.from(it)
         }
     }

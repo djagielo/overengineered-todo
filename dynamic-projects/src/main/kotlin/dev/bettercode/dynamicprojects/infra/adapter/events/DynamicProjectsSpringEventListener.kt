@@ -6,6 +6,7 @@ import dev.bettercode.tasks.application.tasks.TaskCreated
 import org.springframework.context.event.EventListener
 
 internal class DynamicProjectsSpringEventListener(private val dynamicProjectHandlers: DynamicProjectHandlers) {
+    @Suppress("UNUSED_PARAMETER")
     @EventListener
     fun handleProjectCreated(event: ProjectCreated) {
         dynamicProjectHandlers.handleProjectCreated(event)
@@ -16,6 +17,7 @@ internal class DynamicProjectsSpringEventListener(private val dynamicProjectHand
         dynamicProjectHandlers.recalculateProject(event)
     }
 
+    @Suppress("UNUSED_PARAMETER")
     @EventListener
     fun handleRecalculateProject(event: TaskCreated) {
         dynamicProjectHandlers.recalculateAllProjects()

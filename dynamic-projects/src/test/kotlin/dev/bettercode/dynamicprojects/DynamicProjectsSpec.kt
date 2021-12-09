@@ -1,5 +1,5 @@
-import dev.bettercode.dynamicprojects.DynamicProjectsConfiguration
-import dev.bettercode.dynamicprojects.DynamicProjectsFacade
+package dev.bettercode.dynamicprojects
+
 import dev.bettercode.dynamicprojects.application.DynamicProjectHandlers
 import dev.bettercode.dynamicprojects.infra.adapter.events.RecalculateProject
 import dev.bettercode.tasks.ProjectId
@@ -16,12 +16,13 @@ import org.mockito.kotlin.eq
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.PageRequest
+
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 class DynamicProjectsSpec {
 
-    private inline fun <T> notEq(value: T): T {
+    private fun <T> notEq(value: T): T {
         return AdditionalMatchers.not(ArgumentMatchers.eq(value)) ?: value
     }
 
@@ -68,6 +69,7 @@ class DynamicProjectsSpec {
             TaskDto(name = "task_due_2_days_ago", dueDate = LocalDate.now().minusDays(2)),
             TaskDto(name = "task_due_month_ago", dueDate = LocalDate.now().minusDays(30))
         )
+
         doReturn(Page.empty<TaskDto>()).`when`(tasksFacade).getAllOpen(notEq(PageRequest.of(0, 100)))
         doReturn(PageImpl((tasks + tasksOverdue).shuffled())).`when`(tasksFacade).getAllOpen(eq(PageRequest.of(0, 100)))
 

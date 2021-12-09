@@ -1,9 +1,9 @@
 package dev.bettercode.dynamicprojects.infra.adapter.db.inmemory
 
 import dev.bettercode.dynamicprojects.DynamicProjectId
-import dev.bettercode.dynamicprojects.query.DynamicProjectEntity
-import dev.bettercode.dynamicprojects.query.DynamicProjectQueryRepository
-import dev.bettercode.dynamicprojects.query.InMemoryDynamicProjectRepository
+import dev.bettercode.dynamicprojects.query.db.DynamicProjectEntity
+import dev.bettercode.dynamicprojects.query.db.DynamicProjectQueryRepository
+import dev.bettercode.dynamicprojects.query.db.InMemoryDynamicProjectRepository
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable

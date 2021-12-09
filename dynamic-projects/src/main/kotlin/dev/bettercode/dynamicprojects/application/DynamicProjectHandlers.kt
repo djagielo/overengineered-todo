@@ -1,7 +1,7 @@
 package dev.bettercode.dynamicprojects.application
 
 import dev.bettercode.dynamicprojects.infra.adapter.events.RecalculateProject
-import dev.bettercode.dynamicprojects.query.DynamicProjectQueryService
+import dev.bettercode.dynamicprojects.query.service.DynamicProjectQueryService
 import dev.bettercode.tasks.application.projects.ProjectCreated
 
 internal class DynamicProjectHandlers(
@@ -9,6 +9,7 @@ internal class DynamicProjectHandlers(
     private val projectRecalculationService: ProjectRecalculationService,
     private val queryService: DynamicProjectQueryService
 ) {
+    @Suppress("UNUSED_PARAMETER")
     fun handleProjectCreated(event: ProjectCreated) {
         this.defaultDynamicProjectsService.createDefaults()
     }

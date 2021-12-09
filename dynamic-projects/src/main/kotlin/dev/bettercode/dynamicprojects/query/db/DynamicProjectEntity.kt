@@ -1,4 +1,4 @@
-package dev.bettercode.dynamicprojects.query
+package dev.bettercode.dynamicprojects.query.db
 
 import org.hibernate.annotations.Type
 import java.util.*
