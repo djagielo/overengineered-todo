@@ -45,7 +45,7 @@ internal class JdbcTasksRepository(private val jdbcTemplate: JdbcTemplate) : Tas
             status = TaskStatus.valueOf(rs.getString("status")),
             completionDate = rs.getTimestamp("completion_date")?.toInstant(),
             projectId = UUID.fromString(rs.getString("project_id")),
-            dueDate = rs.getDate("due_date").toLocalDate()
+            dueDate = rs.getDate("due_date")?.toLocalDate()
         )
     }
 

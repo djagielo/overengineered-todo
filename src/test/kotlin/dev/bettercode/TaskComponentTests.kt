@@ -17,7 +17,6 @@ class TaskComponentTests {
                 doDeleteTask(it)
             }
         }
-
     }
 
     @Test
@@ -52,7 +51,7 @@ class TaskComponentTests {
         return client().body(
             """
                     {
-                        "name": "${name}"
+                        "name": "$name"
                     }
                 """
         ).`when`().post("/tasks").then().statusCode(201).extract().body().jsonPath().get("id.uuid")

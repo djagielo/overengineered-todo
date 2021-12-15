@@ -6,7 +6,7 @@ import dev.bettercode.tasks.TasksFacade
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 
-class TasksFacadeQueryService(private val tasksFacade: TasksFacade) : TasksQueryService {
+class TasksFacadeQueryServiceAdapter(private val tasksFacade: TasksFacade) : TasksQueryService {
     override fun getAllOpen(pageable: Pageable): Page<TaskDto> {
         return tasksFacade.getAllOpen(pageable)
     }

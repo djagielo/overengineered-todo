@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.util.*
@@ -24,6 +25,15 @@ class TasksController(val tasksFacade: TasksFacade) {
         } ?: ResponseEntity.notFound().build()
     }
 
+    @GetMapping("/tasks")
+    internal fun getAllOpenTasks(
+        @RequestParam("page", required = false) page: Int?,
+        @RequestParam("size", required = false) size: Int?
+    ): ResponseEntity<Page<TaskDto>> {
+        val page = tasksFacade.getAllOpen(PageRequest.of(page ?: 0, size ?: 100))
+        return ResponseEntity.ok(page)
+    }
+
     @PostMapping("/tasks")
     internal fun create(@RequestBody taskRequest: TaskRequest): ResponseEntity<TaskDto> {
         val taskDto = taskRequest.toTaskDto()
@@ -32,7 +42,7 @@ class TasksController(val tasksFacade: TasksFacade) {
             ResponseEntity.created(URI.create("tasks/${taskDto.id.uuid}"))
                 .body(taskDto)
         } else {
-            ResponseEntity.badRequest().build();
+            ResponseEntity.badRequest().build()
         }
     }
 
