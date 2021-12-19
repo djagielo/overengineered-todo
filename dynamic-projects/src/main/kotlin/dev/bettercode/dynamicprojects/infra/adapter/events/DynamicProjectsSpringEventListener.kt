@@ -4,22 +4,26 @@ import dev.bettercode.dynamicprojects.application.DynamicProjectHandlers
 import dev.bettercode.tasks.application.projects.ProjectCreated
 import dev.bettercode.tasks.application.tasks.TaskCreated
 import org.springframework.context.event.EventListener
+import org.springframework.scheduling.annotation.Async
 
-internal class DynamicProjectsSpringEventListener(private val dynamicProjectHandlers: DynamicProjectHandlers) {
+internal open class DynamicProjectsSpringEventListener(private val dynamicProjectHandlers: DynamicProjectHandlers) {
     @Suppress("UNUSED_PARAMETER")
     @EventListener
-    fun handleProjectCreated(event: ProjectCreated) {
+    @Async("eventsExecutor")
+    open fun handleProjectCreated(event: ProjectCreated) {
         dynamicProjectHandlers.handleProjectCreated(event)
     }
 
     @EventListener
-    fun handleRecalculateProject(event: RecalculateProject) {
+    @Async("eventsExecutor")
+    open fun handleRecalculateProject(event: RecalculateProject) {
         dynamicProjectHandlers.recalculateProject(event)
     }
 
     @Suppress("UNUSED_PARAMETER")
     @EventListener
-    fun handleRecalculateProject(event: TaskCreated) {
+    @Async("eventsExecutor")
+    open fun handleRecalculateProject(event: TaskCreated) {
         dynamicProjectHandlers.recalculateAllProjects()
     }
 }
