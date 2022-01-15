@@ -35,7 +35,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EntityScan(basePackageClasses = [TaskEntity::class])
 @EnableWebSecurity
 @Import(TaskEntity::class)
-class TasksConfiguration: WebSecurityConfigurerAdapter() {
+class TasksConfiguration : WebSecurityConfigurerAdapter() {
     companion object {
         fun tasksFacade(inMemoryEventPublisher: InMemoryEventPublisher = InMemoryEventPublisher()): TasksFacade {
             val taskRepo = InMemoryTasksRepository()
@@ -59,6 +59,7 @@ class TasksConfiguration: WebSecurityConfigurerAdapter() {
     override fun configure(http: HttpSecurity?) {
         http!!.authorizeRequests {
             it.mvcMatchers("/tasks**").authenticated()
+            it.mvcMatchers("/projects**").authenticated()
         }
             .oauth2ResourceServer().jwt()
     }
