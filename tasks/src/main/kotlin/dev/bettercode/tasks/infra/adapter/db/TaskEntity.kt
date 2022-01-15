@@ -1,4 +1,4 @@
-package dev.bettercode.tasks.infra.adapter.db;
+package dev.bettercode.tasks.infra.adapter.db
 
 import org.hibernate.annotations.Type
 import java.time.Instant

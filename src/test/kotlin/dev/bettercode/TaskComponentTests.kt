@@ -2,7 +2,6 @@ package dev.bettercode
 
 import io.restassured.RestAssured.given
 import org.hamcrest.CoreMatchers.equalTo
-import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test

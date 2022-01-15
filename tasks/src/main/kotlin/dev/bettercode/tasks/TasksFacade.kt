@@ -123,7 +123,7 @@ open class TasksFacade internal constructor(
     }
 
     fun getAllWithoutDueDate(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {
-        return tasksQueryService.findAllWithoutDueDate(pageable);
+        return tasksQueryService.findAllWithoutDueDate(pageable)
     }
 
     fun getTasksDueDate(pageable: Pageable = PageRequest.of(0, 100), dueDate: LocalDate): Page<TaskDto> {
