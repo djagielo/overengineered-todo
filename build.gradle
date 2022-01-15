@@ -24,6 +24,9 @@ dependencies {
 	implementation(project(":dynamic-projects"))
 	implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
 	implementation platform('org.testcontainers:testcontainers-bom:1.16.2')
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("com.okta.spring:okta-spring-boot-starter:2.0.1")
 
 	testCompile("io.rest-assured:spring-mock-mvc-kotlin-extensions:4.2.0")
 	testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
