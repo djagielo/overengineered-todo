@@ -1,0 +1,22 @@
+server:
+  port: 9999
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/ambicion
+    username: root
+    password: password
+    initialization-mode: always
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+okta:
+  oauth2:
+    issuer: https://dev-24382658.okta.com/oauth2/default
+    client-id: ${OKTA_CLIENT_ID}
+    client-secret: ${OKTA_CLIENT_SECRET}
+
+taskService:
+  url: http://localhost:9999
