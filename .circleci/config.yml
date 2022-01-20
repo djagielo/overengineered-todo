@@ -44,9 +44,9 @@ jobs:
 
       # run tests!
       - run:
-        name: Tests
-        command: ./gradlew test
+          name: Tests
+          command: ./gradlew test
 
       - run:
-        name: Package Jar
-        command: ./gradlew bootJar
+          name: Package Jar
+          command: ./gradlew bootJar
