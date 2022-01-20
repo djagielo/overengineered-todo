@@ -50,3 +50,7 @@ jobs:
       - run:
           name: Package Jar
           command: ./gradlew bootJar
+
+      - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
+
+      - run: docker run -d --name ambicion-serivce bettercode.dev/ambicion-service:$CIRCLE_BRANCH
