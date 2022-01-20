@@ -43,6 +43,10 @@ jobs:
           key: v1-dependencies-{{ checksum "build.gradle" }}
 
       # run tests!
-      - run: ./gradlew test
+      - run:
+        name: Tests
+        command: ./gradlew test
 
-      - run: ./gradlew bootJar
+      - run:
+        name: Package Jar
+        command: ./gradlew bootJar
