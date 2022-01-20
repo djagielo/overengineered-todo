@@ -1,0 +1,24 @@
+server:
+  port: 9999
+spring:
+  datasource:
+    url: jdbc:mariadb://mariadb:3306/ambicion
+    username: root
+    password: password
+    initialization-mode: always
+  jpa:
+    show-sql: true
+    generate-ddl: true
+    properties:
+      hibernate:
+        format_sql: true
+
+keycloak:
+  auth-server-url: http://localhost:8888/auth
+  realm: AmbicionServiceRealm
+  resource: ambicion-service
+  credentials:
+    secret: ${KEYCLOAK_CLIENT_SECRET}
+
+taskService:
+  url: http://localhost:9999
