@@ -51,6 +51,10 @@ jobs:
           name: Package Jar
           command: ./gradlew bootJar
 
+      - setup_remote_docker:
+          version: 19.03.13
+          docker_layer_caching: true
+
       - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
 
       - run: docker run -d --name ambicion-serivce bettercode.dev/ambicion-service:$CIRCLE_BRANCH
