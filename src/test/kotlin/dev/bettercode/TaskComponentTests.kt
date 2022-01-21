@@ -73,5 +73,5 @@ class TaskComponentTests {
             .extract().body().jsonPath().get("content.id.uuid")
     }
 
-    private fun client() = given().port(9999).contentType("application/json")
+    private fun client() = given().baseUri("http://remote-docker:9999").contentType("application/json")
 }
