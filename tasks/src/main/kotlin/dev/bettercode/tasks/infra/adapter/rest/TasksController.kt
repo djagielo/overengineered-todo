@@ -2,14 +2,13 @@
 
 package dev.bettercode.tasks.infra.adapter.rest
 
+import dev.bettercode.commons.paging.PageResult
 import dev.bettercode.tasks.*
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.MissingServletRequestParameterException
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.util.*
@@ -29,9 +28,9 @@ class TasksController(val tasksFacade: TasksFacade) {
     internal fun getAllOpenTasks(
         @RequestParam("page", required = false) page: Int?,
         @RequestParam("size", required = false) size: Int?
-    ): ResponseEntity<Page<TaskDto>> {
+    ): ResponseEntity<PageResult<TaskDto>> {
         val page = tasksFacade.getAllOpen(PageRequest.of(page ?: 0, size ?: 100))
-        return ResponseEntity.ok(page)
+        return ResponseEntity.ok(PageResult(page))
     }
 
     @PostMapping("/tasks")
@@ -61,8 +60,8 @@ class TasksController(val tasksFacade: TasksFacade) {
     }
 
     @GetMapping("/projects")
-    internal fun getAllProjects(): Page<ProjectDto> {
-        return tasksFacade.getProjects()
+    internal fun getAllProjects(): ResponseEntity<PageResult<ProjectDto>> {
+        return ResponseEntity.ok(PageResult(tasksFacade.getProjects()))
     }
 
     @PostMapping("/projects")
@@ -84,9 +83,9 @@ class TasksController(val tasksFacade: TasksFacade) {
     }
 
     @GetMapping("/projects/{id}/tasks")
-    internal fun getTasksForProject(@PathVariable id: UUID): ResponseEntity<Page<TaskDto>> {
+    internal fun getTasksForProject(@PathVariable id: UUID): ResponseEntity<PageResult<TaskDto>> {
         return tasksFacade.getProject(ProjectId(id))?.let {
-            ResponseEntity.ok(tasksFacade.getTasksForProject(PageRequest.of(0, 100), it.id))
+            ResponseEntity.ok(PageResult(tasksFacade.getTasksForProject(PageRequest.of(0, 100), it.id)))
         } ?: ResponseEntity.notFound().build()
     }
 

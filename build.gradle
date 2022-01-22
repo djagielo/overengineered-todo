@@ -20,6 +20,7 @@ subprojects {
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
+	implementation(project(":shared"))
 	implementation(project(":tasks"))
 	implementation(project(":dynamic-projects"))
 	implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
