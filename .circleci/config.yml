@@ -66,4 +66,4 @@ jobs:
       - run:
           name: component tests
           command: |
-            docker run -v $WORKSPACE:/app -w /app --network=component-test-net cimg/openjdk:15.0 ./gradlew componentTests
+            docker run -v ./:/app -w /app --network=component-test-net cimg/openjdk:15.0 ./gradlew componentTests
