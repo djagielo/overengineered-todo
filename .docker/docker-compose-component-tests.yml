@@ -12,6 +12,7 @@ services:
     image: bettercode.dev/ambicion-service:${CIRCLE_BRANCH}
     environment:
       - SPRING_PROFILES_ACTIVE=ct
+      - OKTA_ISSUER=${OKTA_ISSUER}
       - OKTA_CLIENT_ID=${OKTA_CLIENT_ID}
       - OKTA_CLIENT_SECRET=${OKTA_CLIENT_SECRET}
     ports:
