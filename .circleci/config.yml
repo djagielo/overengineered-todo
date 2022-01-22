@@ -63,4 +63,10 @@ jobs:
 
       - run: sleep 60
 
-      - run: ./gradlew componentTests
+      - run:
+          name: component tests
+          command: |
+            docker create --name componentTests cimg/openjdk:15.0 /bin/sh -c "cd /app && ./gradlew componentTests"
+            docker cp $WORKSPACE_ROOT componentTests:/app
+            echo "starting tests container"
+            docker start -a -i tests
