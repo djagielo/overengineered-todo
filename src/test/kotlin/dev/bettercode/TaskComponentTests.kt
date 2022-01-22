@@ -1,11 +1,32 @@
 package dev.bettercode
 
+import com.nimbusds.jose.util.Base64
 import io.restassured.RestAssured.given
 import org.hamcrest.CoreMatchers.equalTo
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 class TaskComponentTests {
+
+    private val clientId: String by lazy {
+        System.getenv("CT_CLIENT_ID")
+    }
+
+    private val clientSecret: String by lazy {
+        System.getenv("CT_CLIENT_SECRET")
+    }
+
+    private val testUser: String by lazy {
+        System.getenv("CT_TEST_USER")
+    }
+
+    private val testPassword: String by lazy {
+        System.getenv("CT_TEST_PASSWORD")
+    }
+
+    private val oktaIssuer: String by lazy {
+        System.getenv("CT_OKTA_ISSUER")
+    }
 
     @AfterEach
     fun cleanup() {
@@ -73,5 +94,27 @@ class TaskComponentTests {
             .extract().body().jsonPath().get("content.id.uuid")
     }
 
-    private fun client() = given().baseUri("http://localhost:9999").contentType("application/json")
+    private fun client() =
+        given().auth().oauth2(accessToken).baseUri("http://localhost:9999").contentType("application/json")
+
+    private val accessToken: String by lazy {
+        given().headers(
+            mapOf(
+                "accept" to "application/json",
+                "authorization" to "Basic ${Base64.encode("$clientId:$clientSecret")}",
+            )
+        )
+            .contentType("application/x-www-form-urlencoded")
+            .formParams(
+                mapOf(
+                    "grant_type" to "password",
+                    "username" to "$testUser",
+                    "password" to "$testPassword",
+                    "scope" to "openid"
+                )
+            )
+            .post("$oktaIssuer/v1/token")
+            .then()
+            .extract().body().jsonPath().get("access_token")
+    }
 }

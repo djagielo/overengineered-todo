@@ -58,7 +58,7 @@ jobs:
       - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
 
       - run: 
-          command: docker run -d -p "9999:9999" --name ambicion-serivce bettercode.dev/ambicion-service:$CIRCLE_BRANCH
+          command: docker compose -f .docker/docker-compose-component-tests.yml up
           background: true
 
       - run: sleep 60

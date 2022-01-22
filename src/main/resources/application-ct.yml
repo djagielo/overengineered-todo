@@ -13,12 +13,11 @@ spring:
       hibernate:
         format_sql: true
 
-keycloak:
-  auth-server-url: http://localhost:8888/auth
-  realm: AmbicionServiceRealm
-  resource: ambicion-service
-  credentials:
-    secret: ${KEYCLOAK_CLIENT_SECRET}
+okta:
+  oauth2:
+    issuer: ${OKTA_ISSUER}
+    client-id: ${OKTA_CLIENT_ID}
+    client-secret: ${OKTA_CLIENT_SECRET}
 
 taskService:
   url: http://localhost:9999
