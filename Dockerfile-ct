@@ -2,4 +2,8 @@ FROM openjdk:15-jdk-alpine
 
 WORKDIR /app
 
+EXPOSE 9999
+
 COPY . /app
+
+ENTRYPOINT ["sleep", "infinity"]

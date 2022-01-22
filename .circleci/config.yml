@@ -68,4 +68,4 @@ jobs:
       - run:
           name: component tests
           command: |
-            docker run -e CT_CLIENT_ID=$CT_CLIENT_ID -e CT_CLIENT_SECRET=$CT_CLIENT_SECRET --network=component-test-net bettercode.dev/ambicion-service-tests:$CIRCLE_BRANCH ./gradlew componentTests
+            docker-compose run tests ./gradlew componentTests
