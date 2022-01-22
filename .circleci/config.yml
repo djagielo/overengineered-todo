@@ -47,13 +47,15 @@ jobs:
           name: Tests
           command: ./gradlew test
 
-      - run:
-          name: Package Jar
-          command: ./gradlew bootJar
-
       - setup_remote_docker:
           version: 19.03.13
           docker_layer_caching: true
+
+      - run: docker build -f Dockerfile-ct -t bettercode.dev/ambicion-service-tests:$CIRCLE_BRANCH .
+
+      - run:
+          name: Package Jar
+          command: ./gradlew bootJar
 
       - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
 
@@ -66,6 +68,4 @@ jobs:
       - run:
           name: component tests
           command: |
-            docker create --name ct -v /workspace -w /workspace cimg/openjdk:15.0 ./gradlew componentTests
-            docker cp . ct:/workspace
-            docker start ct
+            docker run -e CT_CLIENT_ID=$CT_CLIENT_ID -e CT_CLIENT_SECRET=$CT_CLIENT_SECRET --network=component-test-net bettercode.dev/ambicion-service-tests:$CIRCLE_BRANCH ./gradlew componentTests

@@ -19,6 +19,11 @@ services:
       - "9999:9999"
     depends_on:
       - mariadb
+#  tests:
+#    image: bettercode.dev/ambicion-service-tests:${CIRCLE_BRANCH}
+#    environment:
+#      - CT_CLIENT_ID=${CT_CLIENT_ID}
+#      - CT_CLIENT_SECRET=${CT_CLIENT_SECRET}
 networks:
   default:
     name: component-test-net

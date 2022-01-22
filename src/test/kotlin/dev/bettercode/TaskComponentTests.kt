@@ -95,7 +95,7 @@ class TaskComponentTests {
     }
 
     private fun client() =
-        given().auth().oauth2(accessToken).baseUri("http://localhost:9999").contentType("application/json")
+        given().auth().oauth2(accessToken).baseUri("http://ambicion-service:9999").contentType("application/json")
 
     private val accessToken: String by lazy {
         given().headers(
