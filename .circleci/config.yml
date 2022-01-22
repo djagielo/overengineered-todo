@@ -68,4 +68,4 @@ jobs:
       - run:
           name: component tests
           command: |
-            docker-compose -f .docker/docker-compose-component-tests.yml exec tests ./gradlew componentTests
+            docker-compose -f .docker/docker-compose-component-tests.yml exec tests ./gradlew --stacktrace --debug componentTests
