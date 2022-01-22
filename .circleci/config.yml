@@ -67,5 +67,5 @@ jobs:
           name: component tests
           command: |
             docker create --name ct -v /app -w /workspace cimg/openjdk:15.0 ./gradlew componentTests
-            docker cp $WORKSPACE ct:/app
+            docker cp . ct:/app
             docker run ct
