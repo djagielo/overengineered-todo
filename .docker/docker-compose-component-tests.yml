@@ -9,7 +9,7 @@ services:
       - MARIADB_USER=ambicion-service
       - MARIADB_PASSWORD=password
   ambicion-service:
-    image: bettercode.dev/ambicion-service:latest
+    image: bettercode.dev/ambicion-service:${CIRCLE_BRANCH}
     environment:
       - SPRING_PROFILES_ACTIVE=ct
       - OKTA_CLIENT_ID=${OKTA_CLIENT_ID}
