@@ -66,7 +66,4 @@ jobs:
       - run:
           name: component tests
           command: |
-            docker create --name componentTests cimg/openjdk:15.0 /bin/sh -c "cd /app && ./gradlew componentTests"
-            docker cp $WORKSPACE_ROOT componentTests:/app
-            echo "starting tests container"
-            docker start -a -i tests
+            docker run -v $PWD:$PWD -w $PWD --network=component-test-net cimg/openjdk:15.0 ./gradlew componentTests
