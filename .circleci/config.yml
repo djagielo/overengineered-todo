@@ -65,7 +65,7 @@ jobs:
 
       - run:
           name: Verify if running
-          command: docker-compose -f .docker/docker-compose-component-tests.yml run docker.io/jwilder/dockerize \
+          command: docker-compose -f .docker/docker-compose-component-tests.yml run jwilder/dockerize \
             -wait http://ambicion-service:9999/actuator/health -wait-retry-interval 2s -timeout 60s
 
       - run:
