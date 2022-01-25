@@ -60,13 +60,11 @@ jobs:
       - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
 
       - run: 
-          command: docker-compose --project-name circleci-ct -f .docker/docker-compose-component-tests.yml up
-          background: true
-
-      - run:
-          name: Verify if running
-          command: docker container run --network container:circleci-ct_ambicion-service_1 docker.io/jwilder/dockerize \
-            -wait http://localhost:9999/actuator/health -wait-retry-interval 2s -timeout 60s
+          command: | 
+            docker-compose --project-name circleci-ct -f .docker/docker-compose-component-tests.yml up -d
+            
+            docker container run --network container:circleci-ct_ambicion-service_1 docker.io/jwilder/dockerize \
+                        -wait http://localhost:9999/actuator/health -wait-retry-interval 2s -timeout 60s
 
       - run:
           name: component tests
