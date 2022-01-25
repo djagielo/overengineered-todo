@@ -64,8 +64,4 @@ jobs:
             docker-compose --project-name circleci-ct -f .docker/docker-compose-component-tests.yml up -d
             docker container run --network container:circleci-ct_ambicion-service_1 docker.io/jwilder/dockerize \
                         -wait http://localhost:9999/actuator/health -wait-retry-interval 2s -timeout 60s && echo 0
-
-      - run:
-          name: component tests
-          command: |
             docker-compose -f .docker/docker-compose-component-tests.yml exec tests ./gradlew componentTests
