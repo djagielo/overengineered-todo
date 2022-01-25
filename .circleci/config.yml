@@ -62,12 +62,9 @@ jobs:
       - run:
           command: | 
             docker-compose --project-name circleci-ct -f .docker/docker-compose-component-tests.yml up
+            docker container run --network container:circleci-ct_ambicion-service_1 docker.io/jwilder/dockerize \
+                        -wait http://localhost:9999/actuator/health -wait-retry-interval 2s -timeout 60s && echo 0
           background: true
-
-      - run:
-          name: Verify if running
-          command: docker container run --network container:circleci-ct_ambicion-service_1 docker.io/jwilder/dockerize \
-            -wait http://localhost:9999/actuator/health -wait-retry-interval 2s -timeout 60s && echo 0
 
       - run:
           name: component tests
