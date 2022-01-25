@@ -65,6 +65,7 @@ jobs:
             
             docker container run --network container:circleci-ct_ambicion-service_1 docker.io/jwilder/dockerize \
                         -wait http://localhost:9999/actuator/health -wait-retry-interval 2s -timeout 60s
+          background: true
 
       - run:
           name: component tests
