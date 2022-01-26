@@ -27,3 +27,6 @@ services:
       - CT_OKTA_ISSUER=${CT_OKTA_ISSUER}
       - CT_TEST_USER=${CT_TEST_USER}
       - CT_TEST_PASSWORD=${CT_TEST_PASSWORD}
+    depends_on:
+      - ambicion-service
+    command: dockerize -wait http://ambicion-service:9999/actuator/health -wait-retry-interval 2s -timeout 60s && ./gradlew componentTests
