@@ -73,3 +73,10 @@ jobs:
             java -version
 
       - run: ./gradlew componentTests
+
+workflows:
+  version: 2
+  build_and_component_test:
+    jobs:
+      - build
+      - componentTests
