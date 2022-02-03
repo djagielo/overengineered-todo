@@ -73,6 +73,7 @@ jobs:
             java -version
 
       - checkout
+      - run: ./gradlew clean build
       - run: ./gradlew componentTests
 
 workflows:
