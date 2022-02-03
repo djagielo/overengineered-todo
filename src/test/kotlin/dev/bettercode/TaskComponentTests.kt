@@ -3,30 +3,20 @@ package dev.bettercode
 import com.nimbusds.jose.util.Base64
 import io.restassured.RestAssured.given
 import org.hamcrest.CoreMatchers.equalTo
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.testcontainers.containers.GenericContainer
+import org.testcontainers.containers.MariaDBContainer
+import org.testcontainers.containers.Network
+import org.testcontainers.containers.wait.strategy.Wait
+import org.testcontainers.junit.jupiter.Testcontainers
+import org.testcontainers.utility.DockerImageName
 
+
+@Testcontainers
 class TaskComponentTests {
-
-    private val clientId: String by lazy {
-        System.getenv("CT_CLIENT_ID")
-    }
-
-    private val clientSecret: String by lazy {
-        System.getenv("CT_CLIENT_SECRET")
-    }
-
-    private val testUser: String by lazy {
-        System.getenv("CT_TEST_USER")
-    }
-
-    private val testPassword: String by lazy {
-        System.getenv("CT_TEST_PASSWORD")
-    }
-
-    private val oktaIssuer: String by lazy {
-        System.getenv("CT_OKTA_ISSUER")
-    }
 
     @AfterEach
     fun cleanup() {
@@ -37,9 +27,75 @@ class TaskComponentTests {
         }
     }
 
+    class KGenericContainer(image: DockerImageName) : GenericContainer<KGenericContainer>(image)
+    class KMariaDBContainer(image: String) : MariaDBContainer<KMariaDBContainer>(image)
+
+    companion object {
+        private val oktaIssuer: String by lazy {
+            System.getenv("CT_OKTA_ISSUER")
+        }
+
+        private val clientId: String by lazy {
+            System.getenv("CT_CLIENT_ID")
+        }
+
+        private val clientSecret: String by lazy {
+            System.getenv("CT_CLIENT_SECRET")
+        }
+
+        private val testUser: String by lazy {
+            System.getenv("CT_TEST_USER")
+        }
+
+        private val testPassword: String by lazy {
+            System.getenv("CT_TEST_PASSWORD")
+        }
+
+        private val circleBranch: String by lazy {
+            System.getenv("CIRCLE_BRANCH")
+        }
+
+        var network: Network = Network.newNetwork()
+
+        val service: GenericContainer<*> =
+            KGenericContainer(DockerImageName.parse("bettercode.dev/ambicion-service:${circleBranch}"))
+                .withNetwork(network)
+                .withExposedPorts(9999).withEnv(
+                    mapOf(
+                        "OKTA_CLIENT_ID" to clientId,
+                        "OKTA_CLIENT_SECRET" to clientSecret,
+                        "OKTA_ISSUER" to oktaIssuer,
+                        "SPRING_PROFILES_ACTIVE" to "ct"
+                    )
+                )
+                .waitingFor(Wait.forHttp("/actuator/health"))
+
+
+        val db: MariaDBContainer<*> = KMariaDBContainer("mariadb:10.6")
+            .withNetwork(network)
+            .withNetworkAliases("mariadb")
+
+        @JvmStatic
+        @BeforeAll
+        fun beforeAll() {
+            db.start()
+            service
+                .withEnv("MARIA_DB_URL", "jdbc:mariadb://mariadb:3306/test")
+                .withEnv("MARIA_DB_USER", db.username)
+                .withEnv("MARIA_DB_PASS", db.password)
+                .start()
+        }
+
+        @AfterAll
+        internal fun tearDown() {
+            service.stop()
+            db.stop()
+        }
+    }
+
     @Test
     fun `should be able to create task`() {
-        // given -
+        // given
         val id = postTask("todo")
 
         // when
@@ -95,7 +151,8 @@ class TaskComponentTests {
     }
 
     private fun client() =
-        given().auth().oauth2(accessToken).baseUri("http://ambicion-service:9999").contentType("application/json")
+        given().auth().oauth2(accessToken).baseUri("http://localhost:${service.getMappedPort(9999)}")
+            .contentType("application/json")
 
     private val accessToken: String by lazy {
         given().headers(

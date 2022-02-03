@@ -59,7 +59,4 @@ jobs:
 
       - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
 
-      - run:
-          command: | 
-            docker-compose --project-name circleci-ct -f .docker/docker-compose-component-tests.yml up
-        
+      - run: ./gradlew componentTests

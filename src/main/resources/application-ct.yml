@@ -2,9 +2,9 @@ server:
   port: 9999
 spring:
   datasource:
-    url: jdbc:mariadb://mariadb:3306/ambicion
-    username: root
-    password: password
+    url: ${MARIA_DB_URL}
+    username: ${MARIA_DB_USER}
+    password: ${MARIA_DB_PASS}
     initialization-mode: always
   jpa:
     show-sql: true
