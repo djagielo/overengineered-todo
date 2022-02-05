@@ -65,11 +65,11 @@ jobs:
     resource_class: medium
     steps:
       - run:
-          name: Install OpenJDK 17
+          name: Install OpenJDK 11
           command: |
-            sudo apt-get update && sudo apt-get -y install openjdk-17-jdk
-            sudo update-alternatives --set java /usr/lib/jvm/java-17-openjdk-amd64/bin/java
-            sudo update-alternatives --set javac /usr/lib/jvm/java-17-openjdk-amd64/bin/javac
+            sudo apt-get update && sudo apt-get -y install openjdk-11-jdk
+            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
             java -version
 
       - checkout
