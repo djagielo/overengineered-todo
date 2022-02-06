@@ -1,51 +1,66 @@
 plugins {
-	id "org.jetbrains.kotlin.jvm" version "1.4.32"
-	id "org.jetbrains.kotlin.plugin.spring" version "1.4.32"
-	id "org.jetbrains.kotlin.plugin.jpa" version "1.4.32"
+    id "org.jetbrains.kotlin.jvm" version "1.4.32"
+    id "org.jetbrains.kotlin.plugin.spring" version "1.4.32"
+    id "org.jetbrains.kotlin.plugin.jpa" version "1.4.32"
 
-	id "org.springframework.boot" version "2.4.5"
-	id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    id "org.springframework.boot" version "2.4.5"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 subprojects {
-	repositories {
-		mavenCentral()
-	}
+    repositories {
+        mavenCentral()
+    }
 }
 
 java.sourceCompatibility = JavaVersion.VERSION_11
 
 dependencies {
-	implementation(project(":tasks"))
-	implementation(project(":dynamic-projects"))
-	implementation 'org.junit.jupiter:junit-jupiter:5.7.0'
-	implementation platform('org.testcontainers:testcontainers-bom:1.16.2')
-	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.okta.spring:okta-spring-boot-starter:2.0.1")
+    implementation(project(":shared"))
+    implementation(project(":tasks"))
+    implementation(project(":dynamic-projects"))
+    implementation platform('org.testcontainers:testcontainers-bom:1.16.2')
+    implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
+    implementation("com.okta.spring:okta-spring-boot-starter:2.0.1")
 
-	testCompile("io.rest-assured:spring-mock-mvc-kotlin-extensions:4.2.0")
-	testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+    testCompile("io.rest-assured:spring-mock-mvc-kotlin-extensions:4.2.0")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
-	runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
+    testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
+    testImplementation "org.testcontainers:testcontainers:1.16.2"
+    testImplementation "org.testcontainers:junit-jupiter:1.16.2"
+    testImplementation "org.testcontainers:mariadb:1.16.2"
+
+    runtimeOnly("org.mariadb.jdbc:mariadb-java-client")
 }
 
 allprojects {
-	group("dev.bettercode")
-	version("0.0.1-SNAPSHOT")
+    group("dev.bettercode")
+    version("0.0.1-SNAPSHOT")
 
-	tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
-		kotlinOptions {
-			freeCompilerArgs = ["-Xjsr305=strict"]
-			jvmTarget = "11"
-		}
-	}
+    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile) {
+        kotlinOptions {
+            freeCompilerArgs = ["-Xjsr305=strict"]
+            jvmTarget = "11"
+        }
+    }
 
-	test {
-		useJUnitPlatform()
-	}
+    test {
+        useJUnitPlatform {
+            exclude '**/TasksServiceIntegrationTests.class'
+        }
+    }
+
+    task componentTests(type: Test) {
+        useJUnitPlatform {
+            include '**/TasksServiceIntegrationTests.class'
+        }
+    }
 }
+
