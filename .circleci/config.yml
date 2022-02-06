@@ -82,6 +82,6 @@ workflows:
   build_and_component_test:
     jobs:
       - build
-      - componentTests
-        requires:
-          - build
+      - componentTests:
+          requires: 
+            - build
