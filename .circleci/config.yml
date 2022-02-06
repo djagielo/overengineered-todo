@@ -51,8 +51,6 @@ jobs:
           version: 19.03.13
           docker_layer_caching: true
 
-      - run: docker build -f Dockerfile-ct -t bettercode.dev/ambicion-service-tests:$CIRCLE_BRANCH .
-
       - run:
           name: Package Jar
           command: ./gradlew bootJar
