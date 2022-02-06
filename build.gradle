@@ -53,13 +53,13 @@ allprojects {
 
     test {
         useJUnitPlatform {
-            exclude '**/TaskComponentTests.class'
+            exclude '**/TasksServiceIntegrationTests.class'
         }
     }
 
     task componentTests(type: Test) {
         useJUnitPlatform {
-            include '**/TaskComponentTests.class'
+            include '**/TasksServiceIntegrationTests.class'
         }
     }
 }
