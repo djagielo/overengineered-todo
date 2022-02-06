@@ -47,14 +47,39 @@ jobs:
           name: Tests
           command: ./gradlew test
 
-      - run:
-          name: Package Jar
-          command: ./gradlew bootJar
-
       - setup_remote_docker:
           version: 19.03.13
           docker_layer_caching: true
 
+      - run:
+          name: Package Jar
+          command: ./gradlew bootJar
+
       - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
 
-      - run: docker run -d --name ambicion-serivce bettercode.dev/ambicion-service:$CIRCLE_BRANCH
+  componentTests:
+    machine:
+      image: ubuntu-2004:202010-01
+    resource_class: medium
+    steps:
+      - run:
+          name: Install OpenJDK 11
+          command: |
+            sudo apt-get update && sudo apt-get -y install openjdk-11-jdk
+            sudo update-alternatives --set java /usr/lib/jvm/java-11-openjdk-amd64/bin/java
+            sudo update-alternatives --set javac /usr/lib/jvm/java-11-openjdk-amd64/bin/javac
+            java -version
+
+      - checkout
+      - run: ./gradlew clean build bootJar
+      - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
+      - run: ./gradlew componentTests
+
+workflows:
+  version: 2
+  build_and_component_test:
+    jobs:
+      - build
+      - componentTests:
+          requires: 
+            - build
