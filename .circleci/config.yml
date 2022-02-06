@@ -74,7 +74,7 @@ jobs:
 
       - checkout
       - run: ./gradlew clean build
-      - run: ./gradlew componentTests
+      - run: ./gradlew --debug componentTests
 
 workflows:
   version: 2
