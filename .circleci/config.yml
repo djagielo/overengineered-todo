@@ -73,7 +73,8 @@ jobs:
             java -version
 
       - checkout
-      - run: ./gradlew clean build
+      - run: ./gradlew clean build bootJar
+      - run: docker build -f Dockerfile-ct -t bettercode.dev/ambicion-service-tests:$CIRCLE_BRANCH .
       - run: ./gradlew --debug componentTests
 
 workflows:
