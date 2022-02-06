@@ -9,8 +9,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.security.core.annotation.AuthenticationPrincipal
-import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.util.*
@@ -29,10 +27,8 @@ class TasksController(val tasksFacade: TasksFacade) {
     @GetMapping("/tasks")
     internal fun getAllOpenTasks(
         @RequestParam("page", required = false) page: Int?,
-        @RequestParam("size", required = false) size: Int?,
-        @AuthenticationPrincipal principal: Jwt
+        @RequestParam("size", required = false) size: Int?
     ): ResponseEntity<PageResult<TaskDto>> {
-        println(principal.getClaimAsString("email"))
         val page = tasksFacade.getAllOpen(PageRequest.of(page ?: 0, size ?: 100))
         return ResponseEntity.ok(PageResult(page))
     }
