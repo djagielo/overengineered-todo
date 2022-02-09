@@ -22,7 +22,7 @@ internal class TaskService(
             eventPublisher.publish(TaskCreated(taskId = task.id))
             DomainResult.success()
         } else {
-            result;
+            result
         }
     }
 

@@ -21,10 +21,14 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import org.springframework.core.annotation.Order
 import org.springframework.core.task.TaskExecutor
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
+import org.springframework.security.config.annotation.web.builders.HttpSecurity
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
+import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.web.client.RestTemplate
 
 
@@ -32,7 +36,9 @@ import org.springframework.web.client.RestTemplate
 @EnableJpaRepositories(basePackages = ["dev.bettercode.dynamicprojects.infra.adapter", "dev.bettercode.dynamicprojects.query"])
 @EntityScan(basePackageClasses = [DynamicProjectEntity::class])
 @EnableAsync
-internal class DynamicProjectsConfiguration {
+@EnableWebSecurity
+@Order(2)
+internal class DynamicProjectsConfiguration : WebSecurityConfigurerAdapter() {
 
     companion object {
         private val inMemoryDynamicProjectRepository = InMemoryDynamicProjectRepository()
@@ -46,10 +52,20 @@ internal class DynamicProjectsConfiguration {
         internal fun dynamicProjectHandlers(tasksFacade: TasksFacade): DynamicProjectHandlers {
             return DynamicProjectHandlers(
                 DefaultDynamicProjectsService(inMemoryDynamicProjectRepository),
-                ProjectRecalculationService(inMemoryDynamicProjectRepository, TasksFacadeQueryServiceAdapter(tasksFacade)),
+                ProjectRecalculationService(
+                    inMemoryDynamicProjectRepository,
+                    TasksFacadeQueryServiceAdapter(tasksFacade)
+                ),
                 DynamicProjectQueryService(inMemoryQueryRepository)
             )
         }
+    }
+
+    override fun configure(http: HttpSecurity?) {
+        http!!.authorizeRequests {
+            it.mvcMatchers("/dynamic-projects**").authenticated()
+        }
+            .oauth2ResourceServer().jwt()
     }
 
     @Bean
@@ -95,7 +111,10 @@ internal class DynamicProjectsConfiguration {
     }
 
     @Bean
-    fun tasksQueryService(@Value("\${taskService.url}") taskServiceUrl: String, restTemplate: RestTemplate): TasksQueryService {
+    fun tasksQueryService(
+        @Value("\${taskService.url}") taskServiceUrl: String,
+        restTemplate: RestTemplate
+    ): TasksQueryService {
         return TasksRestAdapter(taskServiceUrl, restTemplate)
     }
 
