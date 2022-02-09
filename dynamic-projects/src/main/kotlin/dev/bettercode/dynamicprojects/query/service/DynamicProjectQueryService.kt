@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Pageable
 
-class DynamicProjectQueryService(private val dynamicProjectQueryRepository: DynamicProjectQueryRepository) {
+internal class DynamicProjectQueryService(private val dynamicProjectQueryRepository: DynamicProjectQueryRepository) {
     fun getAll(pageable: Pageable = PageRequest.of(0, 100)): Page<DynamicProjectDto> {
         return dynamicProjectQueryRepository.findAll(pageable).map {
             DynamicProjectDto.from(it)

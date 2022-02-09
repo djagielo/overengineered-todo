@@ -6,7 +6,7 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "dynamic_projects")
-class DynamicProjectEntity(
+internal class DynamicProjectEntity(
     @Id
     @Type(type = "uuid-char")
     val id: UUID = UUID.randomUUID(),

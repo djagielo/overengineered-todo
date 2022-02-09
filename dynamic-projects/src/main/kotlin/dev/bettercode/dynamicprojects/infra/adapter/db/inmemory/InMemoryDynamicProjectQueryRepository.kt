@@ -9,7 +9,7 @@ import org.springframework.data.domain.PageImpl
 import org.springframework.data.domain.Pageable
 import kotlin.math.min
 
-class InMemoryDynamicProjectQueryRepository(val dynamicProjectQueryRepository: InMemoryDynamicProjectRepository) :
+internal class InMemoryDynamicProjectQueryRepository(val dynamicProjectQueryRepository: InMemoryDynamicProjectRepository) :
     DynamicProjectQueryRepository {
     private val mapper: DynamicProjectEntityMapper = DynamicProjectEntityMapper()
     override fun findAll(pageable: Pageable): Page<DynamicProjectEntity> {

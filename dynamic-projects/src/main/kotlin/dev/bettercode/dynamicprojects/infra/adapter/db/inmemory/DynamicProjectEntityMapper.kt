@@ -5,7 +5,7 @@ import dev.bettercode.dynamicprojects.domain.DynamicProject
 import dev.bettercode.dynamicprojects.query.db.DynamicProjectEntity
 import dev.bettercode.tasks.TaskId
 
-class DynamicProjectEntityMapper {
+internal class DynamicProjectEntityMapper {
     fun toEntity(project: DynamicProject): DynamicProjectEntity {
         return DynamicProjectEntity(
             id = project.id.uuid,

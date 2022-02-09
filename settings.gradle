@@ -2,7 +2,9 @@ rootProject.name = 'ambicion-service'
 include 'shared'
 include 'tasks'
 include 'dynamic-projects'
+include 'audit'
 
+project(":audit").projectDir = "audit" as File
 project(":shared").projectDir = "shared" as File
 project(":tasks").projectDir = "tasks" as File
 project(":dynamic-projects").projectDir = "dynamic-projects" as File
