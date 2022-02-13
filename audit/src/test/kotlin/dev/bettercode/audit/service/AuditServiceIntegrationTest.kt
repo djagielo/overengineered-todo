@@ -1,6 +1,6 @@
 package dev.bettercode.audit.service
 
-import dev.bettercode.audit.AuditConfiguration
+import dev.bettercode.audit.AuditTestConfiguration
 import dev.bettercode.audit.repository.AuditLog
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
@@ -11,7 +11,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [AuditConfiguration::class])
+@SpringBootTest(classes = [AuditTestConfiguration::class])
 internal class AuditServiceIntegrationTest {
 
     @Autowired

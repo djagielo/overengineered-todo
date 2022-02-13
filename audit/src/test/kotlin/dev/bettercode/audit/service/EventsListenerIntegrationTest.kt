@@ -1,6 +1,7 @@
 package dev.bettercode.audit.service
 
 import dev.bettercode.audit.AuditConfiguration
+import dev.bettercode.audit.AuditTestConfiguration
 import dev.bettercode.audit.infra.adapter.event.AuditSpringEventsListener
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
@@ -17,7 +18,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [AuditConfiguration::class])
+@SpringBootTest(classes = [AuditTestConfiguration::class])
 class EventsListenerIntegrationTest {
 
     @Autowired
