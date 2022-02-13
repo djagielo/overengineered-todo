@@ -15,4 +15,8 @@ class AuditService(private val auditRepo: AuditRepository) {
             AuditLogDto(id = it.id ?: 0, msg = it.msg ?: "")
         }
     }
+
+    internal fun deleteAll() {
+        return auditRepo.deleteAll()
+    }
 }

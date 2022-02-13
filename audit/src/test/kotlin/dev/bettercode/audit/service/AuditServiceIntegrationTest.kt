@@ -1,7 +1,8 @@
 package dev.bettercode.audit.service
 
+import dev.bettercode.audit.AuditConfiguration
 import dev.bettercode.audit.repository.AuditLog
-import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -10,7 +11,7 @@ import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest
+@SpringBootTest(classes = [AuditConfiguration::class])
 internal class AuditServiceIntegrationTest {
 
     @Autowired
@@ -31,8 +32,9 @@ internal class AuditServiceIntegrationTest {
         val secondPage = auditService.getAll(PageRequest.of(1, 2))
 
         // then
-        assertThat(firstPage.content.map { it.msg }).containsExactlyInAnyOrder("Test audit log1", "Test audit log2")
-        assertThat(secondPage.content.map { it.msg }).containsExactlyInAnyOrder("Test audit log3")
+        Assertions.assertThat(firstPage.content.map { it.msg })
+            .containsExactlyInAnyOrder("Test audit log1", "Test audit log2")
+        Assertions.assertThat(secondPage.content.map { it.msg }).containsExactlyInAnyOrder("Test audit log3")
     }
 
     private fun anAuditLog(msg: String): AuditLog {
