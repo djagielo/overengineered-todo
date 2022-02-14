@@ -1,6 +1,5 @@
 package dev.bettercode.audit.service
 
-import dev.bettercode.audit.AuditConfiguration
 import dev.bettercode.audit.AuditTestConfiguration
 import dev.bettercode.audit.infra.adapter.event.AuditSpringEventsListener
 import dev.bettercode.tasks.ProjectId
@@ -9,7 +8,6 @@ import dev.bettercode.tasks.application.projects.ProjectCreated
 import dev.bettercode.tasks.application.tasks.TaskCreated
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
