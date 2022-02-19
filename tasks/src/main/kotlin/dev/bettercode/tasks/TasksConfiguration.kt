@@ -58,8 +58,7 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity?) {
         http!!.authorizeRequests {
-            it.mvcMatchers("/tasks**").authenticated()
-            it.mvcMatchers("/projects**").authenticated()
+            it.antMatchers("/tasks**").authenticated()
         }
             .oauth2ResourceServer().jwt()
     }
@@ -123,7 +122,10 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    internal fun taskCompletionService(tasksRepository: TasksRepository, eventPublisher: DomainEventPublisher): TaskCompletionService {
+    internal fun taskCompletionService(
+        tasksRepository: TasksRepository,
+        eventPublisher: DomainEventPublisher
+    ): TaskCompletionService {
         return TaskCompletionService(tasksRepository, eventPublisher)
     }
 
@@ -136,7 +138,10 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    internal fun projectCompletionService(projectRepository: ProjectRepository, eventPublisher: DomainEventPublisher): ProjectCompletionService {
+    internal fun projectCompletionService(
+        projectRepository: ProjectRepository,
+        eventPublisher: DomainEventPublisher
+    ): ProjectCompletionService {
         return ProjectCompletionService(projectRepository, eventPublisher)
     }
 

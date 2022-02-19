@@ -39,7 +39,7 @@ dependencies {
 
     implementation("io.vavr:vavr:0.10.3")
 
-    runtimeOnly("com.h2database:h2")
+    testRuntime("com.h2database:h2")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.apache.commons:commons-lang3:3.12.0")

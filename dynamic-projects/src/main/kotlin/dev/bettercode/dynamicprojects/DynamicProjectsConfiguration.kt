@@ -36,7 +36,7 @@ import org.springframework.web.client.RestTemplate
 @EnableJpaRepositories(basePackages = ["dev.bettercode.dynamicprojects.infra.adapter", "dev.bettercode.dynamicprojects.query"])
 @EntityScan(basePackageClasses = [DynamicProjectEntity::class])
 @EnableAsync
-@EnableWebSecurity
+@EnableWebSecurity(debug = true)
 @Order(2)
 internal class DynamicProjectsConfiguration : WebSecurityConfigurerAdapter() {
 
@@ -63,7 +63,7 @@ internal class DynamicProjectsConfiguration : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity?) {
         http!!.authorizeRequests {
-            it.mvcMatchers("/dynamic-projects**").authenticated()
+            it.antMatchers("/dynamic-projects**").authenticated()
         }
             .oauth2ResourceServer().jwt()
     }
