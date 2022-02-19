@@ -40,12 +40,12 @@ open class TasksFacade internal constructor(
         return taskService.delete(id)
     }
 
-    fun complete(id: TaskId, clock: Clock = Clock.systemDefaultZone()) {
-        taskCompletionService.complete(id, clock)
+    fun complete(id: TaskId, clock: Clock = Clock.systemDefaultZone()): DomainResult {
+        return taskCompletionService.complete(id, clock)
     }
 
-    fun complete(task: TaskDto, clock: Clock = Clock.systemDefaultZone()) {
-        this.complete(task.id, clock)
+    fun complete(task: TaskDto, clock: Clock = Clock.systemDefaultZone()): DomainResult {
+        return this.complete(task.id, clock)
     }
 
     fun get(id: TaskId): TaskDto? {
@@ -120,6 +120,10 @@ open class TasksFacade internal constructor(
 
     fun completeProject(project: ProjectDto): DomainResult {
         return projectCompletionService.complete(project.id)
+    }
+
+    fun reopenProject(project: ProjectDto): DomainResult {
+        return projectCompletionService.reopen(project.id)
     }
 
     fun getAllWithoutDueDate(pageable: Pageable = PageRequest.of(0, 100)): Page<TaskDto> {

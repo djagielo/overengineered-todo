@@ -46,10 +46,10 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
             val projectsQueryService = ProjectsQueryService(projectsQueryRepository)
             return TasksFacade(
                 TaskService(taskRepo, projectRepo, projectService, inMemoryEventPublisher),
-                TaskCompletionService(taskRepo),
+                TaskCompletionService(taskRepo, inMemoryEventPublisher),
                 projectService,
                 ProjectAssignmentService(projectRepo, taskRepo, inMemoryEventPublisher),
-                ProjectCompletionService(projectRepo),
+                ProjectCompletionService(projectRepo, inMemoryEventPublisher),
                 TasksQueryService(tasksQueryRepository, taskRepo),
                 projectsQueryService
             )
@@ -123,8 +123,8 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    internal fun taskCompletionService(tasksRepository: TasksRepository): TaskCompletionService {
-        return TaskCompletionService(tasksRepository)
+    internal fun taskCompletionService(tasksRepository: TasksRepository, eventPublisher: DomainEventPublisher): TaskCompletionService {
+        return TaskCompletionService(tasksRepository, eventPublisher)
     }
 
     @Bean
@@ -136,8 +136,8 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    internal fun projectCompletionService(projectRepository: ProjectRepository): ProjectCompletionService {
-        return ProjectCompletionService(projectRepository)
+    internal fun projectCompletionService(projectRepository: ProjectRepository, eventPublisher: DomainEventPublisher): ProjectCompletionService {
+        return ProjectCompletionService(projectRepository, eventPublisher)
     }
 
     @Bean

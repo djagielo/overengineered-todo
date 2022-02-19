@@ -1,7 +1,9 @@
 package dev.bettercode.tasks
 
 import dev.bettercode.bettercode.tasks.TasksFixtures
+import dev.bettercode.tasks.application.tasks.TaskCompleted
 import dev.bettercode.tasks.application.tasks.TaskCreated
+import dev.bettercode.tasks.application.tasks.TaskReopened
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
@@ -70,6 +72,7 @@ internal class TasksUseCases {
         // then - the task should be marked as completed and completion date should be set
         val completedTask = tasksFacade.get(task.id)
         assertThat(completedTask?.completionDate).isCloseTo(Instant.now(), within(1, ChronoUnit.MINUTES))
+        assertThat(eventPublisher.events).contains(TaskCompleted(task.id))
     }
 
     @Test
@@ -84,6 +87,7 @@ internal class TasksUseCases {
         // then - the task should be marked as completed and completion date should be set
         val result = tasksFacade.get(task.id)
         assertThat(result?.completionDate).isNull()
+        assertThat(eventPublisher.events).contains(TaskReopened(task.id))
     }
 
     @Test
@@ -98,6 +102,22 @@ internal class TasksUseCases {
         // then - the task should be marked as completed and completion date should be set
         val result = tasksFacade.get(task.id)
         assertThat(result?.completionDate).`as`("Completion date shouldn't be cleared").isNotNull
+        assertThat(eventPublisher.events).doesNotContain(TaskReopened(task.id))
+    }
+
+    @Test
+    fun `fail to complete already completed task`() {
+        // given - a saved task
+        val task = TasksFixtures.aNoOfTasks(1).first()
+        addAndComplete(task, Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+
+        // when - undoing task completion
+        tasksFacade.complete(task)
+
+        // then - the task should be marked as completed and completion date should be set
+        val result = tasksFacade.get(task.id)
+        assertThat(result?.completionDate).`as`("Completion date shouldn't be cleared").isNotNull
+        assertThat(eventPublisher.events).doesNotContain(TaskReopened(task.id))
     }
 
     private fun addAndComplete(task: TaskDto, clock: Clock = Clock.systemDefaultZone()) {

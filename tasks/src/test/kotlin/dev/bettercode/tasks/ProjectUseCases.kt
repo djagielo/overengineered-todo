@@ -1,6 +1,8 @@
 package dev.bettercode.tasks
 
 import dev.bettercode.bettercode.tasks.TasksFixtures
+import dev.bettercode.tasks.application.projects.ProjectCompleted
+import dev.bettercode.tasks.application.projects.ProjectReopened
 import dev.bettercode.tasks.application.projects.TaskAssignedToProject
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
@@ -198,6 +200,33 @@ internal class ProjectUseCases {
 
         // then - failure with proper reason should be returned
         assertThat(result.successful).isTrue
+    }
+
+    @Test
+    fun `empty project can be completed`() {
+        // given - an empty project to be completed
+        val project = tasksFacade.addProject(ProjectDto("PROJECT TO BE COMPLETED"))
+
+        // when - trying to complete it again
+        val result = tasksFacade.completeProject(project)
+
+        // then - should success and emit event
+        assertThat(result.successful).isTrue
+        assertThat(inMemoryEventPublisher.events).contains(ProjectCompleted(project.id))
+    }
+
+    @Test
+    fun `completed project can be reopened at any time`() {
+        // given - an empty project to be completed
+        val project = tasksFacade.addProject(ProjectDto("PROJECT TO BE REOPENED"))
+        tasksFacade.completeProject(project)
+
+        // when - trying to complete it again
+        val result = tasksFacade.reopenProject(project)
+
+        // then - should success and emit event
+        assertThat(result.successful).isTrue
+        assertThat(inMemoryEventPublisher.events).contains(ProjectCompleted(project.id), ProjectReopened(project.id))
     }
 
     @Test

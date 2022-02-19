@@ -18,9 +18,10 @@ internal class Task(val name: String, val id: TaskId = TaskId(), var projectId: 
         return "Task(name='$name', id=$id)"
     }
 
-    fun complete(instant: Instant = Instant.now()) {
+    fun complete(instant: Instant = Instant.now()): DomainResult {
         status = TaskStatus.COMPLETED
         completionDate = instant
+        return DomainResult.success()
     }
 
     fun dueTo(newDueTo: LocalDate): DomainResult {
