@@ -21,14 +21,10 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.domain.EntityScan
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
-import org.springframework.core.annotation.Order
 import org.springframework.core.task.TaskExecutor
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.scheduling.annotation.EnableAsync
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.web.client.RestTemplate
 
 
@@ -36,9 +32,7 @@ import org.springframework.web.client.RestTemplate
 @EnableJpaRepositories(basePackages = ["dev.bettercode.dynamicprojects.infra.adapter", "dev.bettercode.dynamicprojects.query"])
 @EntityScan(basePackageClasses = [DynamicProjectEntity::class])
 @EnableAsync
-@EnableWebSecurity(debug = true)
-@Order(2)
-internal class DynamicProjectsConfiguration : WebSecurityConfigurerAdapter() {
+class DynamicProjectsConfiguration {
 
     companion object {
         private val inMemoryDynamicProjectRepository = InMemoryDynamicProjectRepository()
@@ -61,20 +55,13 @@ internal class DynamicProjectsConfiguration : WebSecurityConfigurerAdapter() {
         }
     }
 
-    override fun configure(http: HttpSecurity?) {
-        http!!.authorizeRequests {
-            it.antMatchers("/dynamic-projects**").authenticated()
-        }
-            .oauth2ResourceServer().jwt()
-    }
-
     @Bean
-    fun projectCreatedListener(projectCreatedHandler: DynamicProjectHandlers): DynamicProjectsSpringEventListener {
+    internal fun projectCreatedListener(projectCreatedHandler: DynamicProjectHandlers): DynamicProjectsSpringEventListener {
         return DynamicProjectsSpringEventListener(projectCreatedHandler)
     }
 
     @Bean
-    fun projectCreatedEventHandler(
+    internal fun projectCreatedEventHandler(
         dynamicProjectsService: DefaultDynamicProjectsService,
         projectRecalculationService: ProjectRecalculationService,
         dynamicProjectsQueryService: DynamicProjectQueryService
@@ -83,17 +70,17 @@ internal class DynamicProjectsConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun defaultDynamicProjectsService(dynamicProjectRepository: DynamicProjectRepository): DefaultDynamicProjectsService {
+    internal fun defaultDynamicProjectsService(dynamicProjectRepository: DynamicProjectRepository): DefaultDynamicProjectsService {
         return DefaultDynamicProjectsService(dynamicProjectRepository)
     }
 
     @Bean
-    fun dynamicProjectStorageService(projectRepo: DynamicProjectJpaRepository): DynamicProjectRepository {
+    internal fun dynamicProjectStorageService(projectRepo: DynamicProjectJpaRepository): DynamicProjectRepository {
         return DynamicProjectStorageService(DynamicProjectEntityMapper(), projectRepo)
     }
 
     @Bean
-    fun projectRecalculationService(
+    internal fun projectRecalculationService(
         dynamicProjectRepository: DynamicProjectRepository,
         tasksQueryService: TasksQueryService
     ): ProjectRecalculationService {
@@ -106,12 +93,12 @@ internal class DynamicProjectsConfiguration : WebSecurityConfigurerAdapter() {
 //    }
 
     @Bean
-    fun restTemplate(): RestTemplate? {
+    internal fun restTemplate(): RestTemplate? {
         return RestTemplate()
     }
 
     @Bean
-    fun tasksQueryService(
+    internal fun tasksQueryService(
         @Value("\${taskService.url}") taskServiceUrl: String,
         restTemplate: RestTemplate
     ): TasksQueryService {
@@ -119,17 +106,17 @@ internal class DynamicProjectsConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    fun dynamicProjectsFacade(dynamicProjectsQueryService: DynamicProjectQueryService): DynamicProjectsFacade {
+    internal fun dynamicProjectsFacade(dynamicProjectsQueryService: DynamicProjectQueryService): DynamicProjectsFacade {
         return DynamicProjectsFacade(dynamicProjectsQueryService)
     }
 
     @Bean
-    fun dynamicProjectQueryService(dynamicProjectQueryRepository: DynamicProjectQueryRepository): DynamicProjectQueryService {
+    internal fun dynamicProjectQueryService(dynamicProjectQueryRepository: DynamicProjectQueryRepository): DynamicProjectQueryService {
         return DynamicProjectQueryService(dynamicProjectQueryRepository)
     }
 
     @Bean("eventsExecutor")
-    fun threadPoolTaskExecutor(): TaskExecutor? {
+    internal fun threadPoolTaskExecutor(): TaskExecutor? {
         val executor = ThreadPoolTaskExecutor()
         executor.corePoolSize = 16
         executor.maxPoolSize = 32

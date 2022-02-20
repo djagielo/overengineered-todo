@@ -6,12 +6,17 @@ import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @ExtendWith(SpringExtension::class)
-@SpringBootTest(classes = [AuditTestConfiguration::class])
+@SpringBootTest(classes = [AuditTestConfiguration::class], webEnvironment = SpringBootTest.WebEnvironment.NONE)
+@EnableAutoConfiguration(exclude = [ SecurityAutoConfiguration::class])
+@AutoConfigureMockMvc(addFilters = false)
 internal class AuditServiceIntegrationTest {
 
     @Autowired

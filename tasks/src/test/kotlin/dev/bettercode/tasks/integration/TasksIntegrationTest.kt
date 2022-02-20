@@ -1,20 +1,15 @@
 package dev.bettercode.tasks.integration
 
 import dev.bettercode.bettercode.tasks.TasksFixtures
-import dev.bettercode.tasks.TasksConfiguration
 import dev.bettercode.tasks.TasksFacade
 import dev.bettercode.tasks.TasksTestConfiguration
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.context.SpringBootTest.WebEnvironment
 import org.springframework.data.domain.PageRequest
-import org.springframework.test.context.ActiveProfiles
 
 @SpringBootTest(classes = [TasksTestConfiguration::class])
-@ActiveProfiles("test")
 class TasksIntegrationTest {
 
     @Autowired

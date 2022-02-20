@@ -26,16 +26,12 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 
 @Configuration
 @EnableJpaRepositories("dev.bettercode.tasks.infra.adapter.db")
 @EntityScan(basePackageClasses = [TaskEntity::class])
-@EnableWebSecurity
 @Import(TaskEntity::class)
-class TasksConfiguration : WebSecurityConfigurerAdapter() {
+class TasksConfiguration {
     companion object {
         fun tasksFacade(inMemoryEventPublisher: InMemoryEventPublisher = InMemoryEventPublisher()): TasksFacade {
             val taskRepo = InMemoryTasksRepository()
@@ -54,13 +50,6 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
                 projectsQueryService
             )
         }
-    }
-
-    override fun configure(http: HttpSecurity?) {
-        http!!.authorizeRequests {
-            it.antMatchers("/tasks**").authenticated()
-        }
-            .oauth2ResourceServer().jwt()
     }
 
     @Bean
