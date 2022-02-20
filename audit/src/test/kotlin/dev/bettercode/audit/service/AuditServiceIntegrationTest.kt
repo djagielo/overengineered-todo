@@ -3,6 +3,7 @@ package dev.bettercode.audit.service
 import dev.bettercode.audit.AuditTestConfiguration
 import dev.bettercode.audit.repository.AuditLog
 import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,6 +22,11 @@ internal class AuditServiceIntegrationTest {
 
     @Autowired
     lateinit var auditService: AuditService
+
+    @AfterEach
+    fun afterEach() {
+        auditService.deleteAll()
+    }
 
     @Test
     fun `should be able save and retrieved paged AuditLog entries`() {
