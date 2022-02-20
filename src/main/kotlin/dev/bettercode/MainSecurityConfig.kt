@@ -9,7 +9,8 @@ class MainSecurityConfig : WebSecurityConfigurerAdapter() {
 
     override fun configure(http: HttpSecurity?) {
         http!!.authorizeRequests {
-            it.anyRequest().authenticated()
+            it.antMatchers("/actuator/health").permitAll()
+                .anyRequest().authenticated()
         }
             .oauth2ResourceServer().jwt()
     }
