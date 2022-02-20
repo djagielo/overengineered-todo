@@ -16,7 +16,7 @@ import org.testcontainers.utility.DockerImageName
 
 
 @Testcontainers
-class TasksServiceIntegrationTests {
+class TasksServiceComponentTests {
 
     @AfterEach
     fun cleanup() {
