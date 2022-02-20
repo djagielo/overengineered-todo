@@ -45,7 +45,7 @@ jobs:
       # run tests!
       - run:
           name: Tests
-          command: ./gradlew test
+          command: ./gradlew --stacktrace --debug test
 
       - setup_remote_docker:
           version: 19.03.13
