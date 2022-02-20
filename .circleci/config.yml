@@ -45,7 +45,7 @@ jobs:
       # run tests!
       - run:
           name: Tests
-          command: ./gradlew --stacktrace --debug test
+          command: ./gradlew test
 
       - setup_remote_docker:
           version: 19.03.13
@@ -73,7 +73,7 @@ jobs:
       - checkout
       - run: ./gradlew clean build bootJar
       - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
-      - run: ./gradlew componentTests
+      - run: ./gradlew --stacktrace --debug componentTests
 
 workflows:
   version: 2
