@@ -1,4 +1,4 @@
-rootProject.name = 'ambicion-service'
+rootProject.name = 'overengineered-todo'
 include 'shared'
 include 'tasks'
 include 'dynamic-projects'

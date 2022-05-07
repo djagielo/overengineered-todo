@@ -58,7 +58,7 @@ class TasksServiceComponentTests {
         var network: Network = Network.newNetwork()
 
         val service: GenericContainer<*> =
-            KGenericContainer(DockerImageName.parse("bettercode.dev/ambicion-service:${circleBranch}"))
+            KGenericContainer(DockerImageName.parse("bettercode.dev/overengineered-todo:${circleBranch}"))
                 .withNetwork(network)
                 .withExposedPorts(9999).withEnv(
                     mapOf(

@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.data.domain.PageRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.security.oauth2.jwt.Jwt
 import org.springframework.web.bind.annotation.*
 import java.net.URI
 import java.util.*
@@ -29,8 +31,11 @@ class TasksController(val tasksFacade: TasksFacade) {
         @RequestParam("page", required = false) page: Int?,
         @RequestParam("size", required = false) size: Int?
     ): ResponseEntity<PageResult<TaskDto>> {
-        val page = tasksFacade.getAllOpen(PageRequest.of(page ?: 0, size ?: 100))
-        return ResponseEntity.ok(PageResult(page))
+        return ResponseEntity.ok(
+            PageResult(
+                tasksFacade.getAllOpen(PageRequest.of(page ?: 0, size ?: 100))
+            )
+        )
     }
 
     @PostMapping("/tasks")
@@ -60,7 +65,7 @@ class TasksController(val tasksFacade: TasksFacade) {
     }
 
     @GetMapping("/projects")
-    internal fun getAllProjects(): ResponseEntity<PageResult<ProjectDto>> {
+    internal fun getAllProjects(@AuthenticationPrincipal jwt: Jwt): ResponseEntity<PageResult<ProjectDto>> {
         return ResponseEntity.ok(PageResult(tasksFacade.getProjects()))
     }
 

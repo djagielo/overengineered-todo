@@ -6,8 +6,8 @@ import org.springframework.context.annotation.Import
 
 @Import(MainConfig::class)
 @SpringBootApplication
-class AmbicionServiceApplication
+class OverEngineeredTodoApplication
 
 fun main(args: Array<String>) {
-    runApplication<AmbicionServiceApplication>(*args)
+    runApplication<OverEngineeredTodoApplication>(*args)
 }

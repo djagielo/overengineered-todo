@@ -55,7 +55,7 @@ jobs:
           name: Package Jar
           command: ./gradlew bootJar
 
-      - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
+      - run: docker build -t bettercode.dev/overengineered-todo:$CIRCLE_BRANCH .
 
   componentTests:
     machine:
@@ -72,7 +72,7 @@ jobs:
 
       - checkout
       - run: ./gradlew clean build bootJar
-      - run: docker build -t bettercode.dev/ambicion-service:$CIRCLE_BRANCH .
+      - run: docker build -t bettercode.dev/overengineered-todo:$CIRCLE_BRANCH .
       - run: ./gradlew componentTests
 
 workflows:
