@@ -1,4 +1,4 @@
-package dev.bettercode.audit.service;
+package dev.bettercode.audit.service
 
 import dev.bettercode.audit.repository.AuditLog
 import dev.bettercode.audit.repository.AuditRepository

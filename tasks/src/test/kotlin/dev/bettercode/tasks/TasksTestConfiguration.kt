@@ -7,7 +7,6 @@ import org.springframework.context.annotation.Import
 import org.springframework.core.io.ClassPathResource
 import org.springframework.core.io.Resource
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.jdbc.datasource.init.DatabasePopulator
 import org.springframework.jdbc.datasource.init.DatabasePopulatorUtils
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator
 import org.springframework.orm.jpa.JpaTransactionManager

@@ -1,5 +1,6 @@
 package dev.bettercode.tasks.application.tasks
 
+import dev.bettercode.commons.events.AuditLogCommand
 import dev.bettercode.tasks.TaskId
 import dev.bettercode.tasks.domain.tasks.TasksRepository
 import dev.bettercode.tasks.shared.DomainEventPublisher
@@ -19,6 +20,7 @@ internal class TaskCompletionService(
         if (result.successful) {
             tasksRepository.save(task)
             eventPublisher.publish(TaskCompleted(id))
+            eventPublisher.publish(AuditLogCommand("Task with id=TaskId(uuid=${task.id.uuid}) has been completed"))
         }
 
         return result
@@ -32,6 +34,7 @@ internal class TaskCompletionService(
         if (result.successful) {
             tasksRepository.save(task)
             eventPublisher.publish(TaskReopened(task.id))
+            eventPublisher.publish(AuditLogCommand("Task with id=TaskId(uuid=${task.id.uuid}) has been reopened"))
         }
 
         return result

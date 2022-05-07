@@ -1,5 +1,6 @@
 package dev.bettercode.tasks.application.tasks
 
+import dev.bettercode.commons.events.AuditLogCommand
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
 import dev.bettercode.tasks.application.projects.ProjectService
@@ -20,6 +21,7 @@ internal class TaskService(
         return if (result.successful) {
             tasksRepository.add(task)
             eventPublisher.publish(TaskCreated(taskId = task.id))
+            eventPublisher.publish(AuditLogCommand(message = "Task with id=TaskId(uuid=${task.id.uuid}) has been created"))
             DomainResult.success()
         } else {
             result

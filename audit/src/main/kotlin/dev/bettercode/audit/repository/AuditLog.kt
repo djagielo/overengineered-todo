@@ -1,6 +1,6 @@
-package dev.bettercode.audit.repository;
+package dev.bettercode.audit.repository
 
-import javax.persistence.Entity;
+import javax.persistence.Entity
 import javax.persistence.GeneratedValue
 import javax.persistence.GenerationType
 import javax.persistence.Id

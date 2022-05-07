@@ -1,5 +1,6 @@
 package dev.bettercode.tasks.shared
 
+import dev.bettercode.commons.events.DomainEvent
 import io.vavr.control.Either
 import io.vavr.control.Either.left
 import io.vavr.control.Either.right

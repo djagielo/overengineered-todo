@@ -165,8 +165,8 @@ class TasksServiceComponentTests {
             .formParams(
                 mapOf(
                     "grant_type" to "password",
-                    "username" to "$testUser",
-                    "password" to "$testPassword",
+                    "username" to testUser,
+                    "password" to testPassword,
                     "scope" to "openid"
                 )
             )

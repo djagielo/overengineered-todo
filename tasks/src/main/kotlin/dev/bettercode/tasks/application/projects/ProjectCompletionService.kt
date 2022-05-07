@@ -1,5 +1,6 @@
 package dev.bettercode.tasks.application.projects
 
+import dev.bettercode.commons.events.AuditLogCommand
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.domain.projects.ProjectRepository
 import dev.bettercode.tasks.shared.DomainEventPublisher
@@ -15,6 +16,7 @@ internal class ProjectCompletionService(
             if (result.successful) {
                 projectRepository.save(it)
                 eventPublisher.publish(ProjectCompleted(projectId))
+                eventPublisher.publish(AuditLogCommand("Project with id=ProjectId(uuid=${projectId.uuid}) has been completed"))
             }
             return result
         } ?: DomainResult.failure("No project with given id")
@@ -25,6 +27,7 @@ internal class ProjectCompletionService(
             it.reopen()
             projectRepository.save(it)
             eventPublisher.publish(ProjectReopened(projectId))
+            eventPublisher.publish(AuditLogCommand("Project with id=ProjectId(uuid=${projectId.uuid}) has been reopened"))
             DomainResult.success()
         } ?: DomainResult.failure("No project with given id")
     }
