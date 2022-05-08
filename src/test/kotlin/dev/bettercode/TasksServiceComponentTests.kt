@@ -131,7 +131,7 @@ class TasksServiceComponentTests {
                 }
             """.trimIndent()
         ).`when`().
-         put("/task/$id/status").then().statusCode(200).and().body("completed", equalTo(true))
+         put("/tasks/$id/status").then().statusCode(200)
     }
 
     private fun getTask(id: String) = client().get("/tasks/${id}")

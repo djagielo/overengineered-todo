@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Component
 
 @Component
-class AuditSpringEventsListener(private val auditService: AuditService) {
+open class AuditSpringEventsListener(private val auditService: AuditService) {
 
     @EventListener
     @Async

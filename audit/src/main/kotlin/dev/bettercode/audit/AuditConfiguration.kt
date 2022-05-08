@@ -2,6 +2,7 @@
 
 package dev.bettercode.audit
 
+import dev.bettercode.audit.infra.adapter.event.AuditSpringEventsListener
 import dev.bettercode.audit.repository.AuditLog
 import dev.bettercode.audit.repository.AuditRepository
 import dev.bettercode.audit.service.AuditService
@@ -19,5 +20,10 @@ class AuditConfiguration {
     @Bean
     internal fun auditService(auditRepository: AuditRepository): AuditService {
         return AuditService(auditRepository)
+    }
+
+    @Bean
+    internal fun auditSpringEventListener(auditService: AuditService): AuditSpringEventsListener {
+        return AuditSpringEventsListener(auditService)
     }
 }
