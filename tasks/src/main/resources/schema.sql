@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS tasks (
     id VARCHAR(50) NOT NULL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     status VARCHAR(50),
-    completion_date DATE,
+    completion_date TIMESTAMP NULL DEFAULT NULL,
     project_id VARCHAR(50),
 
     CONSTRAINT fk_projects FOREIGN KEY (project_id) REFERENCES projects(id)
