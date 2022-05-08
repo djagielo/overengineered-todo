@@ -132,8 +132,15 @@ internal class ProjectUseCases {
         assertThat(tasksFacade.getTasksForProject(project = privProject)).hasSize(1)
         // and - assign event gets published
         assertThat(inMemoryEventPublisher.events).contains(
-            TaskAssignedToProject(task.id, privProject.id),
-            AuditLogCommand(message = "Task with id=TaskId(uuid=${task.id.uuid}) has been assigned to project with id=ProjectId(uuid=${privProject.id.uuid})")
+            TaskAssignedToProject(task.id, privProject.id)
+        )
+
+        assertThat(inMemoryEventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Task with id=TaskId(uuid=${task.id.uuid}) has been assigned to project with id=ProjectId(uuid=${privProject.id.uuid})"
+            )
         )
     }
 
@@ -215,8 +222,15 @@ internal class ProjectUseCases {
         // then - should success and emit event
         assertThat(result.successful).isTrue
         assertThat(inMemoryEventPublisher.events).contains(
-            ProjectCompleted(project.id),
-            AuditLogCommand(message = "Project with id=ProjectId(uuid=${project.id.uuid}) has been completed")
+            ProjectCompleted(project.id)
+        )
+
+        assertThat(inMemoryEventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Project with id=ProjectId(uuid=${project.id.uuid}) has been completed"
+            )
         )
     }
 
@@ -233,9 +247,16 @@ internal class ProjectUseCases {
         assertThat(result.successful).isTrue
         assertThat(inMemoryEventPublisher.events).contains(
             ProjectCompleted(project.id),
-            AuditLogCommand(message = "Project with id=ProjectId(uuid=${project.id.uuid}) has been completed"),
             ProjectReopened(project.id),
-            AuditLogCommand(message = "Project with id=ProjectId(uuid=${project.id.uuid}) has been reopened")
+        )
+
+        assertThat(inMemoryEventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Project with id=ProjectId(uuid=${project.id.uuid}) has been completed",
+                "Project with id=ProjectId(uuid=${project.id.uuid}) has been reopened"
+            )
         )
     }
 

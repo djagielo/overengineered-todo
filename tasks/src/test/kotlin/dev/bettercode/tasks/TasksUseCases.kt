@@ -31,8 +31,15 @@ internal class TasksUseCases {
         // then - should get the task by id
         assertThat(tasksFacade.get(task.id)).isEqualTo(task)
         assertThat(eventPublisher.events).contains(
-            TaskCreated(task.id),
-            AuditLogCommand("Task with id=TaskId(uuid=${task.id.uuid}) has been created")
+            TaskCreated(task.id)
+        )
+
+        assertThat(eventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Task with id=TaskId(uuid=${task.id.uuid}) has been created"
+            )
         )
     }
 
@@ -47,7 +54,17 @@ internal class TasksUseCases {
         // then - should be able to retrieve them
         assertThat(tasksFacade.getOpenInboxTasks())
             .containsExactlyInAnyOrder(*tasks.toTypedArray())
-        assertThat(eventPublisher.events).contains(*(tasks.map { TaskCreated(it.id) } + tasks.map { AuditLogCommand("Task with id=TaskId(uuid=${it.id.uuid}) has been created") }).toTypedArray())
+        assertThat(eventPublisher.events).contains(*(tasks.map { TaskCreated(it.id) }).toTypedArray())
+
+
+        tasks.map { AuditLogCommand("Task with id=TaskId(uuid=${it.id.uuid}) has been created") }
+        assertThat(eventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            tasks.map {
+                "Task with id=TaskId(uuid=${it.id.uuid}) has been created"
+            }.toList()
+        )
     }
 
     @Test
@@ -77,8 +94,15 @@ internal class TasksUseCases {
         val completedTask = tasksFacade.get(task.id)
         assertThat(completedTask?.completionDate).isCloseTo(Instant.now(), within(1, ChronoUnit.MINUTES))
         assertThat(eventPublisher.events).contains(
-            TaskCompleted(task.id),
-            AuditLogCommand("Task with id=TaskId(uuid=${task.id.uuid}) has been completed")
+            TaskCompleted(task.id)
+        )
+
+        assertThat(eventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Task with id=TaskId(uuid=${task.id.uuid}) has been completed",
+            )
         )
     }
 
@@ -96,7 +120,14 @@ internal class TasksUseCases {
         assertThat(result?.completionDate).isNull()
         assertThat(eventPublisher.events).contains(
             TaskReopened(task.id),
-            AuditLogCommand("Task with id=TaskId(uuid=${task.id.uuid}) has been reopened")
+        )
+
+        assertThat(eventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Task with id=TaskId(uuid=${task.id.uuid}) has been reopened",
+            )
         )
     }
 
