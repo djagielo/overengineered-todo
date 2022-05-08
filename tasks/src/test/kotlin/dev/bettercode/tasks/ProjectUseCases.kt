@@ -133,7 +133,7 @@ internal class ProjectUseCases {
         // and - assign event gets published
         assertThat(inMemoryEventPublisher.events).contains(
             TaskAssignedToProject(task.id, privProject.id),
-            AuditLogCommand("Task with id=TaskId(uuid=${task.id.uuid}) has been assigned to project with id=ProjectId(uuid=${privProject.id.uuid})")
+            AuditLogCommand(message = "Task with id=TaskId(uuid=${task.id.uuid}) has been assigned to project with id=ProjectId(uuid=${privProject.id.uuid})")
         )
     }
 
@@ -216,7 +216,7 @@ internal class ProjectUseCases {
         assertThat(result.successful).isTrue
         assertThat(inMemoryEventPublisher.events).contains(
             ProjectCompleted(project.id),
-            AuditLogCommand("Project with id=ProjectId(uuid=${project.id.uuid}) has been completed")
+            AuditLogCommand(message = "Project with id=ProjectId(uuid=${project.id.uuid}) has been completed")
         )
     }
 
@@ -233,9 +233,9 @@ internal class ProjectUseCases {
         assertThat(result.successful).isTrue
         assertThat(inMemoryEventPublisher.events).contains(
             ProjectCompleted(project.id),
-            AuditLogCommand("Project with id=ProjectId(uuid=${project.id.uuid}) has been completed"),
+            AuditLogCommand(message = "Project with id=ProjectId(uuid=${project.id.uuid}) has been completed"),
             ProjectReopened(project.id),
-            AuditLogCommand("Project with id=ProjectId(uuid=${project.id.uuid}) has been reopened")
+            AuditLogCommand(message = "Project with id=ProjectId(uuid=${project.id.uuid}) has been reopened")
         )
     }
 

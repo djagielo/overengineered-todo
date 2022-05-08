@@ -100,9 +100,11 @@ class DynamicProjectsConfiguration {
     @Bean
     internal fun tasksQueryService(
         @Value("\${taskService.url}") taskServiceUrl: String,
-        restTemplate: RestTemplate
+        restTemplate: RestTemplate,
+        tasksFacade: TasksFacade
     ): TasksQueryService {
-        return TasksRestAdapter(taskServiceUrl, restTemplate)
+        return TasksFacadeQueryServiceAdapter(tasksFacade)
+        //return TasksRestAdapter(taskServiceUrl, restTemplate)
     }
 
     @Bean

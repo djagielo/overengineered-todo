@@ -32,7 +32,7 @@ class EventsListenerIntegrationTest {
     fun `AuditLogCommand should add a message to Audit Log`() {
         // given
         val projectId = ProjectId()
-        eventListener.handleAuditLogCmd(AuditLogCommand("Project with id=ProjectId(uuid=${projectId.uuid}) has been reopened"))
+        eventListener.handleAuditLogCmd(AuditLogCommand(message = "Project with id=ProjectId(uuid=${projectId.uuid}) has been reopened"))
 
         // when
         val audits = auditService.getAll(PageRequest.of(0, 2))

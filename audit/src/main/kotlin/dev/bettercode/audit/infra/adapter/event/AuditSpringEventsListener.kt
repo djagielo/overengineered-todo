@@ -5,10 +5,11 @@ import dev.bettercode.audit.service.AuditService
 import dev.bettercode.commons.events.AuditLogCommand
 import org.springframework.context.event.EventListener
 import org.springframework.scheduling.annotation.Async
+import org.springframework.stereotype.Component
 
-internal open class AuditSpringEventsListener(private val auditService: AuditService) {
+@Component
+class AuditSpringEventsListener(private val auditService: AuditService) {
 
-    @Suppress("UNUSED_PARAMETER")
     @EventListener
     @Async
     fun handleAuditLogCmd(auditLogCommand: AuditLogCommand) {

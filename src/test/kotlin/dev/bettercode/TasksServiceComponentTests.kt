@@ -3,16 +3,20 @@ package dev.bettercode
 import com.nimbusds.jose.util.Base64
 import io.restassured.RestAssured.given
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.startsWith
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
+import org.mockito.kotlin.isNotNull
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.MariaDBContainer
 import org.testcontainers.containers.Network
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 @Testcontainers
@@ -110,9 +114,24 @@ class TasksServiceComponentTests {
         val id = postTask("todo")
 
         // when
+        completeTask(id = id)
+
+
         getTask(id)
             // then
             .body("name", equalTo("todo"))
+            .body("completionDate", startsWith(LocalDate.now().format(DateTimeFormatter.ISO_DATE)))
+    }
+
+    private fun completeTask(id: String) {
+        client().body(
+            """
+                {
+                    "completed": true
+                }
+            """.trimIndent()
+        ).`when`().
+         put("/task/$id/status").then().statusCode(200).and().body("completed", equalTo(true))
     }
 
     private fun getTask(id: String) = client().get("/tasks/${id}")

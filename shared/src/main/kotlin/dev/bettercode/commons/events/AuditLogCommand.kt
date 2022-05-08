@@ -1,3 +1,5 @@
 package dev.bettercode.commons.events
 
-data class AuditLogCommand(val message: String): DomainEvent()
+import java.time.Instant
+
+data class AuditLogCommand(val message: String, val timestamp: Instant = Instant.now()) : DomainEvent()

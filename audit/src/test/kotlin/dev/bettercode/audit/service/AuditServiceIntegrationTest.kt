@@ -13,6 +13,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.data.domain.PageRequest
 import org.springframework.test.context.junit.jupiter.SpringExtension
+import java.time.Instant
 
 @ExtendWith(SpringExtension::class)
 @SpringBootTest(classes = [AuditTestConfiguration::class], webEnvironment = SpringBootTest.WebEnvironment.NONE)
@@ -49,7 +50,7 @@ internal class AuditServiceIntegrationTest {
     }
 
     private fun anAuditLog(msg: String): AuditLog {
-        return AuditLog(msg = msg)
+        return AuditLog(msg = msg, timestamp = Instant.now())
     }
 
 }

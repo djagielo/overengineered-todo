@@ -22,7 +22,7 @@ internal class ProjectAssignmentService(
                     return if (result.successful) {
                         tasksRepository.save(it)
                         domainEventPublisher.publish(TaskAssignedToProject(taskId, projectId))
-                        domainEventPublisher.publish(AuditLogCommand("Task with id=TaskId(uuid=${taskId.uuid}) has been assigned to project with id=ProjectId(uuid=${projectId.uuid})"))
+                        domainEventPublisher.publish(AuditLogCommand(message = "Task with id=TaskId(uuid=${taskId.uuid}) has been assigned to project with id=ProjectId(uuid=${projectId.uuid})"))
                         return result
                     } else {
                         result

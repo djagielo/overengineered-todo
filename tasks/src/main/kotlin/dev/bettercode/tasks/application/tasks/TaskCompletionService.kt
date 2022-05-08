@@ -20,7 +20,7 @@ internal class TaskCompletionService(
         if (result.successful) {
             tasksRepository.save(task)
             eventPublisher.publish(TaskCompleted(id))
-            eventPublisher.publish(AuditLogCommand("Task with id=TaskId(uuid=${task.id.uuid}) has been completed"))
+            eventPublisher.publish(AuditLogCommand(message = "Task with id=TaskId(uuid=${task.id.uuid}) has been completed"))
         }
 
         return result
@@ -34,7 +34,7 @@ internal class TaskCompletionService(
         if (result.successful) {
             tasksRepository.save(task)
             eventPublisher.publish(TaskReopened(task.id))
-            eventPublisher.publish(AuditLogCommand("Task with id=TaskId(uuid=${task.id.uuid}) has been reopened"))
+            eventPublisher.publish(AuditLogCommand(message = "Task with id=TaskId(uuid=${task.id.uuid}) has been reopened"))
         }
 
         return result
