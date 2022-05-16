@@ -26,16 +26,12 @@ import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Import
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories
 import org.springframework.jdbc.core.JdbcTemplate
-import org.springframework.security.config.annotation.web.builders.HttpSecurity
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 
 @Configuration
 @EnableJpaRepositories("dev.bettercode.tasks.infra.adapter.db")
 @EntityScan(basePackageClasses = [TaskEntity::class])
-@EnableWebSecurity
 @Import(TaskEntity::class)
-class TasksConfiguration : WebSecurityConfigurerAdapter() {
+class TasksConfiguration {
     companion object {
         fun tasksFacade(inMemoryEventPublisher: InMemoryEventPublisher = InMemoryEventPublisher()): TasksFacade {
             val taskRepo = InMemoryTasksRepository()
@@ -46,22 +42,14 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
             val projectsQueryService = ProjectsQueryService(projectsQueryRepository)
             return TasksFacade(
                 TaskService(taskRepo, projectRepo, projectService, inMemoryEventPublisher),
-                TaskCompletionService(taskRepo),
+                TaskCompletionService(taskRepo, inMemoryEventPublisher),
                 projectService,
                 ProjectAssignmentService(projectRepo, taskRepo, inMemoryEventPublisher),
-                ProjectCompletionService(projectRepo),
+                ProjectCompletionService(projectRepo, inMemoryEventPublisher),
                 TasksQueryService(tasksQueryRepository, taskRepo),
                 projectsQueryService
             )
         }
-    }
-
-    override fun configure(http: HttpSecurity?) {
-        http!!.authorizeRequests {
-            it.mvcMatchers("/tasks**").authenticated()
-            it.mvcMatchers("/projects**").authenticated()
-        }
-            .oauth2ResourceServer().jwt()
     }
 
     @Bean
@@ -123,8 +111,11 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    internal fun taskCompletionService(tasksRepository: TasksRepository): TaskCompletionService {
-        return TaskCompletionService(tasksRepository)
+    internal fun taskCompletionService(
+        tasksRepository: TasksRepository,
+        eventPublisher: DomainEventPublisher
+    ): TaskCompletionService {
+        return TaskCompletionService(tasksRepository, eventPublisher)
     }
 
     @Bean
@@ -136,8 +127,11 @@ class TasksConfiguration : WebSecurityConfigurerAdapter() {
     }
 
     @Bean
-    internal fun projectCompletionService(projectRepository: ProjectRepository): ProjectCompletionService {
-        return ProjectCompletionService(projectRepository)
+    internal fun projectCompletionService(
+        projectRepository: ProjectRepository,
+        eventPublisher: DomainEventPublisher
+    ): ProjectCompletionService {
+        return ProjectCompletionService(projectRepository, eventPublisher)
     }
 
     @Bean

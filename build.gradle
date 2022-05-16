@@ -23,6 +23,8 @@ dependencies {
     implementation(project(":shared"))
     implementation(project(":tasks"))
     implementation(project(":dynamic-projects"))
+	implementation(project(":audit"))
+
     implementation platform('org.testcontainers:testcontainers-bom:1.16.2')
     implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server")
     implementation("org.springframework.boot:spring-boot-starter-web")
@@ -30,8 +32,9 @@ dependencies {
     implementation("com.okta.spring:okta-spring-boot-starter:2.0.1")
 
     testCompile("io.rest-assured:spring-mock-mvc-kotlin-extensions:4.2.0")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
 
+	testImplementation("org.mockito.kotlin:mockito-kotlin:4.0.0")
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation "org.junit.jupiter:junit-jupiter:5.8.1"
     testImplementation "org.testcontainers:testcontainers:1.16.2"
     testImplementation "org.testcontainers:junit-jupiter:1.16.2"
@@ -53,13 +56,13 @@ allprojects {
 
     test {
         useJUnitPlatform {
-            exclude '**/TasksServiceIntegrationTests.class'
+            exclude '**/TasksServiceComponentTests.class'
         }
     }
 
     task componentTests(type: Test) {
         useJUnitPlatform {
-            include '**/TasksServiceIntegrationTests.class'
+            include '**/TasksServiceComponentTests.class'
         }
     }
 }

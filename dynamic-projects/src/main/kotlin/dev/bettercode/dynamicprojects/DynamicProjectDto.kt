@@ -9,7 +9,7 @@ data class DynamicProjectDto(
     val tasks: Set<TaskId> = emptySet()
 ) {
     companion object {
-        fun from(entity: DynamicProjectEntity): DynamicProjectDto {
+        internal fun from(entity: DynamicProjectEntity): DynamicProjectDto {
             return DynamicProjectDto(
                 name = entity.name!!,
                 id = DynamicProjectId(uuid = entity.id),

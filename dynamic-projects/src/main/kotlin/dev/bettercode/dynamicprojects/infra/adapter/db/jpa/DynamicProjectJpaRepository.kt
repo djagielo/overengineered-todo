@@ -6,4 +6,4 @@ import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface DynamicProjectJpaRepository : JpaRepository<DynamicProjectEntity, UUID>
+internal interface DynamicProjectJpaRepository : JpaRepository<DynamicProjectEntity, UUID>

@@ -1,7 +1,10 @@
 package dev.bettercode.tasks
 
 import dev.bettercode.bettercode.tasks.TasksFixtures
+import dev.bettercode.commons.events.AuditLogCommand
+import dev.bettercode.tasks.application.tasks.TaskCompleted
 import dev.bettercode.tasks.application.tasks.TaskCreated
+import dev.bettercode.tasks.application.tasks.TaskReopened
 import dev.bettercode.tasks.shared.InMemoryEventPublisher
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.within
@@ -27,7 +30,17 @@ internal class TasksUseCases {
 
         // then - should get the task by id
         assertThat(tasksFacade.get(task.id)).isEqualTo(task)
-        assertThat(eventPublisher.events).contains(TaskCreated(task.id))
+        assertThat(eventPublisher.events).contains(
+            TaskCreated(task.id)
+        )
+
+        assertThat(eventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Task with id=TaskId(uuid=${task.id.uuid}) has been created"
+            )
+        )
     }
 
     @Test
@@ -41,7 +54,17 @@ internal class TasksUseCases {
         // then - should be able to retrieve them
         assertThat(tasksFacade.getOpenInboxTasks())
             .containsExactlyInAnyOrder(*tasks.toTypedArray())
-        assertThat(eventPublisher.events).contains(*tasks.map { TaskCreated(it.id) }.toTypedArray())
+        assertThat(eventPublisher.events).contains(*(tasks.map { TaskCreated(it.id) }).toTypedArray())
+
+
+        tasks.map { AuditLogCommand("Task with id=TaskId(uuid=${it.id.uuid}) has been created") }
+        assertThat(eventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            tasks.map {
+                "Task with id=TaskId(uuid=${it.id.uuid}) has been created"
+            }.toList()
+        )
     }
 
     @Test
@@ -70,6 +93,17 @@ internal class TasksUseCases {
         // then - the task should be marked as completed and completion date should be set
         val completedTask = tasksFacade.get(task.id)
         assertThat(completedTask?.completionDate).isCloseTo(Instant.now(), within(1, ChronoUnit.MINUTES))
+        assertThat(eventPublisher.events).contains(
+            TaskCompleted(task.id)
+        )
+
+        assertThat(eventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Task with id=TaskId(uuid=${task.id.uuid}) has been completed",
+            )
+        )
     }
 
     @Test
@@ -84,6 +118,17 @@ internal class TasksUseCases {
         // then - the task should be marked as completed and completion date should be set
         val result = tasksFacade.get(task.id)
         assertThat(result?.completionDate).isNull()
+        assertThat(eventPublisher.events).contains(
+            TaskReopened(task.id),
+        )
+
+        assertThat(eventPublisher.events.filterIsInstance<AuditLogCommand>().map {
+            it.message
+        }.toList()).containsAll(
+            listOf(
+                "Task with id=TaskId(uuid=${task.id.uuid}) has been reopened",
+            )
+        )
     }
 
     @Test
@@ -98,6 +143,22 @@ internal class TasksUseCases {
         // then - the task should be marked as completed and completion date should be set
         val result = tasksFacade.get(task.id)
         assertThat(result?.completionDate).`as`("Completion date shouldn't be cleared").isNotNull
+        assertThat(eventPublisher.events).doesNotContain(TaskReopened(task.id))
+    }
+
+    @Test
+    fun `fail to complete already completed task`() {
+        // given - a saved task
+        val task = TasksFixtures.aNoOfTasks(1).first()
+        addAndComplete(task, Clock.fixed(Instant.now(), ZoneId.systemDefault()))
+
+        // when - undoing task completion
+        tasksFacade.complete(task)
+
+        // then - the task should be marked as completed and completion date should be set
+        val result = tasksFacade.get(task.id)
+        assertThat(result?.completionDate).`as`("Completion date shouldn't be cleared").isNotNull
+        assertThat(eventPublisher.events).doesNotContain(TaskReopened(task.id))
     }
 
     private fun addAndComplete(task: TaskDto, clock: Clock = Clock.systemDefaultZone()) {

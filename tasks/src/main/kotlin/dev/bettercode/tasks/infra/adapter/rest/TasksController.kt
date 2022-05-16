@@ -29,8 +29,11 @@ class TasksController(val tasksFacade: TasksFacade) {
         @RequestParam("page", required = false) page: Int?,
         @RequestParam("size", required = false) size: Int?
     ): ResponseEntity<PageResult<TaskDto>> {
-        val page = tasksFacade.getAllOpen(PageRequest.of(page ?: 0, size ?: 100))
-        return ResponseEntity.ok(PageResult(page))
+        return ResponseEntity.ok(
+            PageResult(
+                tasksFacade.getAllOpen(PageRequest.of(page ?: 0, size ?: 100))
+            )
+        )
     }
 
     @PostMapping("/tasks")

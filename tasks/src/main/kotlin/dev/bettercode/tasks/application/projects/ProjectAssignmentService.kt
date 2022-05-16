@@ -1,5 +1,6 @@
 package dev.bettercode.tasks.application.projects
 
+import dev.bettercode.commons.events.AuditLogCommand
 import dev.bettercode.tasks.ProjectId
 import dev.bettercode.tasks.TaskId
 import dev.bettercode.tasks.domain.projects.ProjectRepository
@@ -21,6 +22,7 @@ internal class ProjectAssignmentService(
                     return if (result.successful) {
                         tasksRepository.save(it)
                         domainEventPublisher.publish(TaskAssignedToProject(taskId, projectId))
+                        domainEventPublisher.publish(AuditLogCommand(message = "Task with id=TaskId(uuid=${taskId.uuid}) has been assigned to project with id=ProjectId(uuid=${projectId.uuid})"))
                         return result
                     } else {
                         result

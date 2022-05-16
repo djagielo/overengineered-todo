@@ -3,6 +3,7 @@ package dev.bettercode
 import com.nimbusds.jose.util.Base64
 import io.restassured.RestAssured.given
 import org.hamcrest.CoreMatchers.equalTo
+import org.hamcrest.CoreMatchers.startsWith
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
@@ -13,10 +14,12 @@ import org.testcontainers.containers.Network
 import org.testcontainers.containers.wait.strategy.Wait
 import org.testcontainers.junit.jupiter.Testcontainers
 import org.testcontainers.utility.DockerImageName
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 
 @Testcontainers
-class TasksServiceIntegrationTests {
+class TasksServiceComponentTests {
 
     @AfterEach
     fun cleanup() {
@@ -58,7 +61,7 @@ class TasksServiceIntegrationTests {
         var network: Network = Network.newNetwork()
 
         val service: GenericContainer<*> =
-            KGenericContainer(DockerImageName.parse("bettercode.dev/ambicion-service:${circleBranch}"))
+            KGenericContainer(DockerImageName.parse("bettercode.dev/overengineered-todo:${circleBranch}"))
                 .withNetwork(network)
                 .withExposedPorts(9999).withEnv(
                     mapOf(
@@ -110,9 +113,47 @@ class TasksServiceIntegrationTests {
         val id = postTask("todo")
 
         // when
+        completeTask(id = id)
+
+
         getTask(id)
             // then
             .body("name", equalTo("todo"))
+            .body("completionDate", startsWith(LocalDate.now().format(DateTimeFormatter.ISO_DATE)))
+    }
+
+    @Test
+    fun `should be able to reopen task the same day`() {
+        // given
+        val id = postTask("todo")
+        completeTask(id = id)
+
+        // when
+        reopenTask(id = id)
+
+        getTask(id)
+            // then
+            .body("name", equalTo("todo"))
+            .body("completionDate", equalTo(null))
+    }
+
+    private fun completeTask(id: String) {
+      updateStatus(id, completed = true)
+    }
+
+    private fun reopenTask(id: String) {
+        updateStatus(id, completed = false)
+    }
+
+    private fun updateStatus(id: String, completed: Boolean) {
+        client().body(
+            """
+                {
+                    "completed": $completed
+                }
+            """.trimIndent()
+        ).`when`().
+        put("/tasks/$id/status").then().statusCode(200)
     }
 
     private fun getTask(id: String) = client().get("/tasks/${id}")
@@ -165,8 +206,8 @@ class TasksServiceIntegrationTests {
             .formParams(
                 mapOf(
                     "grant_type" to "password",
-                    "username" to "$testUser",
-                    "password" to "$testPassword",
+                    "username" to testUser,
+                    "password" to testPassword,
                     "scope" to "openid"
                 )
             )

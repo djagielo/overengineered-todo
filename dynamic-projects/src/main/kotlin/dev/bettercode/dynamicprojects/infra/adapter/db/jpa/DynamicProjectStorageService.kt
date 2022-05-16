@@ -6,7 +6,7 @@ import dev.bettercode.dynamicprojects.domain.DynamicProjectRepository
 import dev.bettercode.dynamicprojects.infra.adapter.db.inmemory.DynamicProjectEntityMapper
 import org.springframework.data.repository.findByIdOrNull
 
-class DynamicProjectStorageService(
+internal class DynamicProjectStorageService(
     private val mapper: DynamicProjectEntityMapper,
     private val projectRepo: DynamicProjectJpaRepository
 ) : DynamicProjectRepository {
