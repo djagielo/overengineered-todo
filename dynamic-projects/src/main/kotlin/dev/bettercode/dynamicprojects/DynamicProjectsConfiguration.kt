@@ -11,7 +11,6 @@ import dev.bettercode.dynamicprojects.infra.adapter.db.jpa.DynamicProjectJpaRepo
 import dev.bettercode.dynamicprojects.infra.adapter.db.jpa.DynamicProjectStorageService
 import dev.bettercode.dynamicprojects.infra.adapter.events.DynamicProjectsSpringEventListener
 import dev.bettercode.dynamicprojects.infra.adapter.tasks.TasksFacadeQueryServiceAdapter
-import dev.bettercode.dynamicprojects.infra.adapter.tasks.TasksRestAdapter
 import dev.bettercode.dynamicprojects.query.db.DynamicProjectEntity
 import dev.bettercode.dynamicprojects.query.db.DynamicProjectQueryRepository
 import dev.bettercode.dynamicprojects.query.db.InMemoryDynamicProjectRepository

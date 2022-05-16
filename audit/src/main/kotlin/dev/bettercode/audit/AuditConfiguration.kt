@@ -1,5 +1,3 @@
-@file:Suppress("unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused", "unused")
-
 package dev.bettercode.audit
 
 import dev.bettercode.audit.infra.adapter.event.AuditSpringEventsListener
