@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.mockito.kotlin.isNotNull
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.containers.MariaDBContainer
 import org.testcontainers.containers.Network
@@ -123,15 +122,38 @@ class TasksServiceComponentTests {
             .body("completionDate", startsWith(LocalDate.now().format(DateTimeFormatter.ISO_DATE)))
     }
 
+    @Test
+    fun `should be able to reopen task the same day`() {
+        // given
+        val id = postTask("todo")
+        completeTask(id = id)
+
+        // when
+        reopenTask(id = id)
+
+        getTask(id)
+            // then
+            .body("name", equalTo("todo"))
+            .body("completionDate", equalTo(null))
+    }
+
     private fun completeTask(id: String) {
+      updateStatus(id, completed = true)
+    }
+
+    private fun reopenTask(id: String) {
+        updateStatus(id, completed = false)
+    }
+
+    private fun updateStatus(id: String, completed: Boolean) {
         client().body(
             """
                 {
-                    "completed": true
+                    "completed": $completed
                 }
             """.trimIndent()
         ).`when`().
-         put("/tasks/$id/status").then().statusCode(200)
+        put("/tasks/$id/status").then().statusCode(200)
     }
 
     private fun getTask(id: String) = client().get("/tasks/${id}")
